@@ -19,8 +19,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.dark,
       theme: ThemeData(
-        colorScheme:
-            ColorScheme.fromSeed(seedColor: AppColors.primaryBackground),
+        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primaryBackground),
         useMaterial3: true,
       ),
       routeInformationParser: _appRouter.defaultRouteParser(),

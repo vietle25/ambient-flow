@@ -112,10 +112,8 @@ class HomeCubit extends Cubit<HomeState> {
 
   // Format the remaining time as mm:ss
   String get formattedTime {
-    final String minutes =
-        (state.timerRemaining ~/ 60).toString().padLeft(2, '0');
-    final String seconds =
-        (state.timerRemaining % 60).toString().padLeft(2, '0');
+    final String minutes = (state.timerRemaining ~/ 60).toString().padLeft(2, '0');
+    final String seconds = (state.timerRemaining % 60).toString().padLeft(2, '0');
     return '$minutes:$seconds';
   }
 
@@ -123,5 +121,13 @@ class HomeCubit extends Cubit<HomeState> {
   Future<void> close() {
     _timer?.cancel();
     return super.close();
+  }
+
+  void onTapItem({required String soundId, required bool isActive}) {
+    toggleSound(soundId);
+
+    if (!isActive) {
+      toggleVolumeControl(soundId);
+    }
   }
 }

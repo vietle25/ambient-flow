@@ -5,10 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../widgets/animated_background/animated_background_widget.dart';
 import '../../widgets/animated_background/cubit/background_cubit.dart';
 import '../../widgets/custom_app_bar.dart';
-import '../../widgets/header_section.dart';
-import '../../widgets/main_content_section.dart';
 import 'cubit/home_cubit.dart';
 import 'cubit/home_state.dart';
+import 'widgets/main_content_section.dart';
 
 @RoutePage()
 class HomePage extends StatefulWidget {
@@ -46,8 +45,7 @@ class _HomePageState extends State<HomePage> {
           builder: (BuildContext context, BoxConstraints constraints) {
             // Determine if we're on a mobile, tablet, or desktop
             final bool isDesktop = constraints.maxWidth > 1100;
-            final bool isTablet =
-                constraints.maxWidth > 650 && constraints.maxWidth <= 1100;
+            final bool isTablet = constraints.maxWidth > 650 && constraints.maxWidth <= 1100;
             final bool isMobile = constraints.maxWidth <= 650;
 
             return Scaffold(
@@ -57,23 +55,19 @@ class _HomePageState extends State<HomePage> {
               appBar: const CustomAppBar(),
               // Stack the background and content
               body: Stack(
+                fit: StackFit.expand,
+                alignment: Alignment.center,
                 children: <Widget>[
                   // Animated background
                   const AnimatedBackgroundWidget(),
                   // Content
-                  Column(
-                    children: <Widget>[
-                      HeaderSection(
-                        isMobile: isMobile,
-                        isTablet: isTablet,
-                        isDesktop: isDesktop,
-                      ),
-                      MainContentSection(
-                        isMobile: isMobile,
-                        isTablet: isTablet,
-                        isDesktop: isDesktop,
-                      ),
-                    ],
+                  Container(
+                    margin: const EdgeInsets.only(top: kToolbarHeight + 50),
+                    child: MainContentSection(
+                      isMobile: isMobile,
+                      isTablet: isTablet,
+                      isDesktop: isDesktop,
+                    ),
                   ),
                 ],
               ),
