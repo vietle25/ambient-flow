@@ -1,17 +1,13 @@
 import 'package:equatable/equatable.dart';
 
-// Define background types
-enum BackgroundType { day, night, sunset, rain, snow }
-
 class HomeState extends Equatable {
   final List<String> activeSounds;
   final double volume;
   final bool isPlaying;
   final int timerDuration; // in seconds
   final int timerRemaining; // in seconds
-  final BackgroundType backgroundType;
-  final double backgroundTransitionProgress; // 0.0 to 1.0
-  final BackgroundType previousBackgroundType;
+  final String?
+      activeVolumeControlSoundId; // Track which sound's volume control is active
 
   const HomeState({
     this.activeSounds = const <String>[],
@@ -19,9 +15,7 @@ class HomeState extends Equatable {
     this.isPlaying = false,
     this.timerDuration = 1500, // 25 minutes by default
     this.timerRemaining = 1500,
-    this.backgroundType = BackgroundType.day,
-    this.backgroundTransitionProgress = 1.0,
-    this.previousBackgroundType = BackgroundType.day,
+    this.activeVolumeControlSoundId,
   });
 
   HomeState copyWith({
@@ -30,9 +24,7 @@ class HomeState extends Equatable {
     bool? isPlaying,
     int? timerDuration,
     int? timerRemaining,
-    BackgroundType? backgroundType,
-    double? backgroundTransitionProgress,
-    BackgroundType? previousBackgroundType,
+    String? activeVolumeControlSoundId,
   }) {
     return HomeState(
       activeSounds: activeSounds ?? this.activeSounds,
@@ -40,11 +32,8 @@ class HomeState extends Equatable {
       isPlaying: isPlaying ?? this.isPlaying,
       timerDuration: timerDuration ?? this.timerDuration,
       timerRemaining: timerRemaining ?? this.timerRemaining,
-      backgroundType: backgroundType ?? this.backgroundType,
-      backgroundTransitionProgress:
-          backgroundTransitionProgress ?? this.backgroundTransitionProgress,
-      previousBackgroundType:
-          previousBackgroundType ?? this.previousBackgroundType,
+      activeVolumeControlSoundId:
+          activeVolumeControlSoundId ?? this.activeVolumeControlSoundId,
     );
   }
 
@@ -55,8 +44,6 @@ class HomeState extends Equatable {
         isPlaying,
         timerDuration,
         timerRemaining,
-        backgroundType,
-        backgroundTransitionProgress,
-        previousBackgroundType,
+        activeVolumeControlSoundId,
       ];
 }

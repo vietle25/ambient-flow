@@ -39,18 +39,29 @@ class _HeaderSectionState extends State<HeaderSection> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          // Top tabs (Playlists, Favorites)
-          _buildCategoryTabs(),
-          const SizedBox(height: 16),
-          // Sound categories and action buttons
-          _buildSoundCategories(),
-        ],
-      ),
+    return Stack(
+      children: <Widget>[
+        // Semi-transparent overlay with 20% opacity
+        Positioned.fill(
+          child: Container(
+            color: Colors.black.withOpacity(0.2),
+          ),
+        ),
+        // Content
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              // Top tabs (Playlists, Favorites)
+              _buildCategoryTabs(),
+              const SizedBox(height: 16),
+              // Sound categories and action buttons
+              _buildSoundCategories(),
+            ],
+          ),
+        ),
+      ],
     );
   }
 

@@ -1,13 +1,16 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../widgets/animated_background.dart';
+import '../../widgets/animated_background/animated_background_widget.dart';
+import '../../widgets/animated_background/cubit/background_cubit.dart';
 import '../../widgets/custom_app_bar.dart';
 import '../../widgets/header_section.dart';
 import '../../widgets/main_content_section.dart';
 import 'cubit/home_cubit.dart';
 import 'cubit/home_state.dart';
 
+@RoutePage()
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -16,25 +19,29 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // Create a cubit instance directly in the screen
-  final HomeCubit cubit = HomeCubit();
+  final HomeCubit homeCubit = HomeCubit();
+  final BackgroundCubit backgroundCubit = BackgroundCubit();
 
   @override
   void dispose() {
-    // Don't forget to close the cubit when the screen is disposed
-    cubit.close();
+    homeCubit.close();
+    backgroundCubit.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<HomeCubit>(
-      create: (BuildContext context) => cubit,
+    return MultiBlocProvider(
+      providers: <BlocProvider<dynamic>>[
+        BlocProvider<HomeCubit>(
+          create: (BuildContext context) => homeCubit,
+        ),
+        BlocProvider<BackgroundCubit>(
+          create: (BuildContext context) => backgroundCubit,
+        ),
+      ],
       child: BlocListener<HomeCubit, HomeState>(
-        listener: (BuildContext context, HomeState state) {
-          // Handle state changes that require one-time actions
-          // For example, showing snackbars, dialogs, or navigation
-        },
+        listener: (BuildContext context, HomeState state) {},
         child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
             // Determine if we're on a mobile, tablet, or desktop
@@ -46,42 +53,29 @@ class _HomePageState extends State<HomePage> {
             return Scaffold(
               // Use a transparent background since we'll use our custom animated background
               backgroundColor: Colors.transparent,
+              extendBodyBehindAppBar: true,
               appBar: const CustomAppBar(),
               // Stack the background and content
-              body: BlocBuilder<HomeCubit, HomeState>(
-                buildWhen: (HomeState previous, HomeState current) =>
-                    previous.backgroundType != current.backgroundType ||
-                    previous.backgroundTransitionProgress !=
-                        current.backgroundTransitionProgress ||
-                    previous.previousBackgroundType !=
-                        current.previousBackgroundType,
-                builder: (BuildContext context, HomeState state) {
-                  return Stack(
+              body: Stack(
+                children: <Widget>[
+                  // Animated background
+                  const AnimatedBackgroundWidget(),
+                  // Content
+                  Column(
                     children: <Widget>[
-                      // Animated background
-                      AnimatedBackground(
-                        currentBackground: state.backgroundType,
-                        previousBackground: state.previousBackgroundType,
-                        transitionProgress: state.backgroundTransitionProgress,
+                      HeaderSection(
+                        isMobile: isMobile,
+                        isTablet: isTablet,
+                        isDesktop: isDesktop,
                       ),
-                      // Content
-                      Column(
-                        children: <Widget>[
-                          HeaderSection(
-                            isMobile: isMobile,
-                            isTablet: isTablet,
-                            isDesktop: isDesktop,
-                          ),
-                          MainContentSection(
-                            isMobile: isMobile,
-                            isTablet: isTablet,
-                            isDesktop: isDesktop,
-                          ),
-                        ],
+                      MainContentSection(
+                        isMobile: isMobile,
+                        isTablet: isTablet,
+                        isDesktop: isDesktop,
                       ),
                     ],
-                  );
-                },
+                  ),
+                ],
               ),
             );
           },

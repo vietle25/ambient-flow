@@ -1,18 +1,13 @@
 import 'dart:async';
-import 'dart:math' as math;
+
 import 'package:bloc/bloc.dart';
+
 import 'home_state.dart';
 
 class HomeCubit extends Cubit<HomeState> {
   Timer? _timer;
-  Timer? _backgroundTimer;
-  Timer? _transitionTimer;
-  final math.Random _random = math.Random();
 
-  HomeCubit() : super(const HomeState()) {
-    // Start the background change timer
-    _startBackgroundTimer();
-  }
+  HomeCubit() : super(const HomeState());
 
   // Toggle a sound on/off
   void toggleSound(String soundId) {
@@ -78,6 +73,24 @@ class HomeCubit extends Cubit<HomeState> {
     print('Saved sound combination "$name": ${state.activeSounds}');
   }
 
+  // Toggle the volume control sidebar for a specific sound
+  void toggleVolumeControl(String soundId) {
+    // If the same sound is clicked again, close the sidebar
+    if (state.activeVolumeControlSoundId == soundId) {
+      emit(state.copyWith(activeVolumeControlSoundId: null));
+    } else {
+      // Otherwise, show the sidebar for this sound
+      emit(state.copyWith(activeVolumeControlSoundId: soundId));
+    }
+  }
+
+  // Close the volume control sidebar
+  void closeVolumeControl() {
+    if (state.activeVolumeControlSoundId != null) {
+      emit(state.copyWith(activeVolumeControlSoundId: null));
+    }
+  }
+
   // Private method to start the timer
   void _startTimer() {
     _timer?.cancel();
@@ -106,72 +119,9 @@ class HomeCubit extends Cubit<HomeState> {
     return '$minutes:$seconds';
   }
 
-  // Background management methods
-  void _startBackgroundTimer() {
-    _backgroundTimer?.cancel();
-    _backgroundTimer = Timer.periodic(const Duration(seconds: 10), (Timer _) {
-      _changeBackground();
-    });
-  }
-
-  void _changeBackground() {
-    // Store the current background as previous
-    final BackgroundType previousBackground = state.backgroundType;
-
-    // Select a new background that's different from the current one
-    BackgroundType newBackground;
-    do {
-      newBackground =
-          BackgroundType.values[_random.nextInt(BackgroundType.values.length)];
-    } while (newBackground == previousBackground);
-
-    // Start with 0 transition progress
-    emit(state.copyWith(
-      previousBackgroundType: previousBackground,
-      backgroundType: newBackground,
-      backgroundTransitionProgress: 0.0,
-    ));
-
-    // Start the transition animation
-    _startTransitionAnimation();
-  }
-
-  void _startTransitionAnimation() {
-    _transitionTimer?.cancel();
-
-    // We'll update 60 times per second for 1 second duration
-    const int totalSteps = 60;
-    const Duration stepDuration = Duration(milliseconds: 1000 ~/ 60);
-    int currentStep = 0;
-
-    _transitionTimer = Timer.periodic(stepDuration, (Timer timer) {
-      currentStep++;
-      final double progress = currentStep / totalSteps;
-
-      if (currentStep >= totalSteps) {
-        timer.cancel();
-        emit(state.copyWith(backgroundTransitionProgress: 1.0));
-      } else {
-        // Use a curve for smoother transition
-        final double curvedProgress = _applyCurve(progress);
-        emit(state.copyWith(backgroundTransitionProgress: curvedProgress));
-      }
-    });
-  }
-
-  // Apply an ease-in-out curve for smoother transition
-  double _applyCurve(double progress) {
-    // Using a simple ease-in-out curve
-    return progress < 0.5
-        ? 2 * progress * progress
-        : -1 + (4 - 2 * progress) * progress;
-  }
-
   @override
   Future<void> close() {
     _timer?.cancel();
-    _backgroundTimer?.cancel();
-    _transitionTimer?.cancel();
     return super.close();
   }
 }

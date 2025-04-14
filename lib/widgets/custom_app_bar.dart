@@ -1,9 +1,11 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../constants/app_colors.dart';
 import '../constants/app_strings.dart';
 import '../constants/app_styles.dart';
+import '../navigation/route_constants.dart';
 import '../screens/home/cubit/home_cubit.dart';
 import '../screens/home/cubit/home_state.dart';
 
@@ -18,7 +20,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: const Text(AppStrings.appTitle, style: AppStyles.appBarTitle),
       centerTitle: false,
       actions: <Widget>[
-        // Timer display
         BlocBuilder<HomeCubit, HomeState>(
           buildWhen: (HomeState previous, HomeState current) =>
               previous.isPlaying != current.isPlaying ||
@@ -48,7 +49,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           },
         ),
         const SizedBox(width: 16),
-        // Upgrade button
         Container(
           margin: const EdgeInsets.only(right: 16),
           child: ElevatedButton(
@@ -63,7 +63,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             child: const Text('Upgrade'),
           ),
         ),
-        // Volume control
         BlocBuilder<HomeCubit, HomeState>(
           buildWhen: (HomeState previous, HomeState current) =>
               previous.volume != current.volume,
@@ -93,8 +92,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
         // Settings menu
         IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.menu, color: Colors.white),
+          onPressed: () =>
+              context.router.navigateNamed(RouteConstants.settings),
+          icon: const Icon(Icons.settings, color: Colors.white),
         ),
         // Full screen toggle
         IconButton(

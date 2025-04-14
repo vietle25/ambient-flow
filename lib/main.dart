@@ -1,25 +1,30 @@
-import 'package:ambientflow/screens/home/home_page.dart';
 import 'package:flutter/material.dart';
+
 import 'constants/app_colors.dart';
+import 'navigation/app_router.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
+
+  final AppRouter _appRouter = AppRouter();
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Ambient Flow',
       debugShowCheckedModeBanner: false,
+      themeMode: ThemeMode.dark,
       theme: ThemeData(
         colorScheme:
             ColorScheme.fromSeed(seedColor: AppColors.primaryBackground),
         useMaterial3: true,
       ),
-      home: const HomePage(),
+      routeInformationParser: _appRouter.defaultRouteParser(),
+      routerDelegate: _appRouter.delegate(),
     );
   }
 }
