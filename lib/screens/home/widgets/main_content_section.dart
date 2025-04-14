@@ -34,25 +34,30 @@ class MainContentSection extends StatelessWidget {
     // For desktop, we want it to take up only 50% of the screen width
     double maxWidth = MediaQuery.of(context).size.width;
     if (isDesktop) {
-      maxWidth = maxWidth * 0.5; // 50% of screen width for desktop
+      maxWidth = maxWidth * 0.6;
     } else if (isTablet) {
-      maxWidth = maxWidth * 0.7; // 70% of screen width for tablet
+      maxWidth = maxWidth * 0.8;
     }
 
     return Center(
       child: Container(
         constraints: BoxConstraints(maxWidth: maxWidth),
-        child: GridView.count(
-          padding: EdgeInsets.symmetric(
-            horizontal: isMobile ? 12 : 16,
-            vertical: isMobile ? 16 : 20,
+        child: ScrollConfiguration(
+          behavior: ScrollConfiguration.of(context).copyWith(
+            scrollbars: false,
           ),
-          crossAxisCount: crossAxisCount,
-          mainAxisSpacing: isMobile ? 12 : 16,
-          crossAxisSpacing: isMobile ? 12 : 16,
-          childAspectRatio: 1.0, // Square aspect ratio for buttons
-          physics: const BouncingScrollPhysics(),
-          children: _buildSoundButtons(context),
+          child: GridView.count(
+            padding: EdgeInsets.symmetric(
+              horizontal: isMobile ? 12 : 16,
+              vertical: isMobile ? 16 : 20,
+            ),
+            crossAxisCount: crossAxisCount,
+            mainAxisSpacing: isMobile ? 12 : 16,
+            crossAxisSpacing: isMobile ? 12 : 16,
+            childAspectRatio: 1.0, // Square aspect ratio for buttons
+            physics: const BouncingScrollPhysics(),
+            children: _buildSoundButtons(context),
+          ),
         ),
       ),
     );
@@ -62,12 +67,14 @@ class MainContentSection extends StatelessWidget {
     final HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
 
     return SoundData.sounds.map((SoundModel sound) {
-      return BlocBuilder<HomeCubit, HomeState>(builder: (BuildContext context, HomeState state) {
+      return BlocBuilder<HomeCubit, HomeState>(
+          builder: (BuildContext context, HomeState state) {
         final bool isActive = state.activeSounds.contains(sound.id);
         return AudioButtonWithVolume(
           key: ValueKey<String>(sound.id),
           sound: sound,
-          onTapItem: () => cubit.onTapItem(soundId: sound.id, isActive: isActive),
+          onTapItem: () =>
+              cubit.onTapItem(soundId: sound.id, isActive: isActive),
           isActive: isActive,
         );
       });

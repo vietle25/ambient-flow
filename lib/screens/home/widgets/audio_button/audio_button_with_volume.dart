@@ -23,8 +23,14 @@ class AudioButtonWithVolume extends StatefulWidget {
 
 class _AudioButtonWithVolumeState extends State<AudioButtonWithVolume> {
   final AudioButtonCubit cubit = AudioButtonCubit();
-
   bool isHovered = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the cubit with the sound model
+    cubit.initialize(widget.sound);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,18 +66,35 @@ class _AudioButtonWithVolumeState extends State<AudioButtonWithVolume> {
                 color: Colors.transparent,
                 child: InkWell(
                   borderRadius: BorderRadius.circular(20.0),
-                  onTap: () => widget.onTapItem(),
+                  onTap: () {
+                    // Toggle sound playback
+                    cubit.toggleSound();
+                    // Call the parent's onTapItem callback
+                    widget.onTapItem();
+                  },
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 150),
-                    transform: isHovered ? (Matrix4.identity()..scale(1.05)) : Matrix4.identity(),
+                    transform: isHovered
+                        ? (Matrix4.identity()..scale(1.05))
+                        : Matrix4.identity(),
                     padding: const EdgeInsets.all(4.0),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Icon(
-                          widget.sound.icon,
-                          color: widget.isActive ? Colors.white : Colors.white60,
-                          size: 25,
+                        BlocBuilder<AudioButtonCubit, AudioButtonState>(
+                          buildWhen: (AudioButtonState previous,
+                                  AudioButtonState current) =>
+                              previous.isPlaying != current.isPlaying,
+                          builder:
+                              (BuildContext context, AudioButtonState state) {
+                            return Icon(
+                              widget.sound.icon,
+                              color: state.isPlaying || widget.isActive
+                                  ? Colors.white
+                                  : Colors.white60,
+                              size: 25,
+                            );
+                          },
                         ),
                         !widget.isActive
                             ? const SizedBox.shrink()
@@ -93,7 +116,8 @@ class _AudioButtonWithVolumeState extends State<AudioButtonWithVolume> {
                                       min: 0,
                                       activeColor: Colors.white,
                                       inactiveColor: Colors.white54,
-                                      onChanged: (double value) => cubit.onChangeVolume(value),
+                                      onChanged: (double value) =>
+                                          cubit.onChangeVolume(value),
                                     ),
                                   ),
                                 ),
