@@ -28,6 +28,8 @@ class SoundData {
     return sounds.map((SoundModel sound) => sound.category).toSet().toList();
   }
 
+  static const String basePath = 'assets/sounds';
+
   /// List of all available sound models in the application.
   static final List<SoundModel> sounds = <SoundModel>[
     // Weather sounds
@@ -36,19 +38,21 @@ class SoundData {
       name: 'Light Rain',
       icon: Icons.cloud_outlined,
       category: 'weather',
+      audioPath: '$basePath/light-rain.mp3',
     ),
     const SoundModel(
       id: 'heavy_rain',
       name: 'Heavy Rain',
       icon: Icons.cloud,
       category: 'weather',
+      audioPath: '$basePath/rain.mp3',
     ),
     const SoundModel(
       id: 'thunder',
       name: 'Thunder',
       icon: Icons.thunderstorm_outlined,
       category: 'weather',
-      audioPath: 'assets/sounds/thunder.mp3',
+      audioPath: '$basePath/thunder.mp3',
     ),
 
     const SoundModel(
@@ -56,12 +60,14 @@ class SoundData {
       name: 'Wind',
       icon: Icons.air,
       category: 'weather',
+      audioPath: '$basePath/wind.mp3',
     ),
     const SoundModel(
       id: 'forest',
       name: 'Forest',
       icon: Icons.forest_outlined,
       category: 'weather',
+      audioPath: '$basePath/forest.mp3',
     ),
 
     // Nature sounds
@@ -70,24 +76,28 @@ class SoundData {
       name: 'Leaves',
       icon: Icons.eco_outlined,
       category: 'nature',
+      audioPath: '$basePath/leaves.m4a',
     ),
     const SoundModel(
       id: 'waves',
       name: 'Waves',
       icon: Icons.waves_outlined,
       category: 'nature',
+      audioPath: '$basePath/waves.mp3',
     ),
     const SoundModel(
       id: 'stream',
       name: 'Stream',
       icon: Icons.water_outlined,
       category: 'nature',
+      audioPath: '$basePath/flowing-water.mp3',
     ),
     const SoundModel(
       id: 'water_drops',
       name: 'Water Drops',
       icon: Icons.water_drop_outlined,
       category: 'nature',
+      audioPath: '$basePath/water.mp3',
     ),
 
     // Fire and ambience
@@ -96,6 +106,7 @@ class SoundData {
       name: 'Fire',
       icon: Icons.local_fire_department_outlined,
       category: 'ambience',
+      audioPath: '$basePath/fire.mp3',
     ),
     const SoundModel(
       id: 'night',
@@ -108,12 +119,14 @@ class SoundData {
       name: 'Cafe',
       icon: Icons.coffee_outlined,
       category: 'ambience',
+      audioPath: '$basePath/coffee-shop.mp3',
     ),
     const SoundModel(
       id: 'train',
       name: 'Train',
       icon: Icons.train_outlined,
       category: 'ambience',
+      audioPath: '$basePath/train.mp3',
     ),
 
     // Sound patterns
@@ -122,6 +135,7 @@ class SoundData {
       name: 'Fan',
       icon: Icons.air_outlined,
       category: 'noise',
+      audioPath: '$basePath/fan-room.mp3',
     ),
     const SoundModel(
       id: 'white_noise',
@@ -168,6 +182,7 @@ class SoundData {
       name: 'City Traffic',
       icon: Icons.directions_car_outlined,
       category: 'urban',
+      audioPath: '$basePath/traffic.mp3',
     ),
     const SoundModel(
       id: 'city_park',
@@ -214,6 +229,7 @@ class SoundData {
       name: 'Beach Waves',
       icon: Icons.beach_access_outlined,
       category: 'beach',
+      audioPath: '$basePath/waves.mp3',
     ),
     const SoundModel(
       id: 'seagulls',
@@ -300,6 +316,7 @@ class SoundData {
       name: 'Jungle Sounds',
       icon: Icons.forest_outlined,
       category: 'tropical',
+      audioPath: '$basePath/jungle.mp3',
     ),
     const SoundModel(
       id: 'tropical_birds',
