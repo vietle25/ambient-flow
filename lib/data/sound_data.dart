@@ -113,6 +113,7 @@ class SoundData {
       name: 'Night',
       icon: Icons.mode_night_outlined,
       category: 'ambience',
+      audioPath: '$basePath/night-frog.mp3',
     ),
     const SoundModel(
       id: 'cafe',
@@ -142,6 +143,7 @@ class SoundData {
       name: 'White Noise',
       icon: Icons.graphic_eq,
       category: 'noise',
+      audioPath: '$basePath/whitenoise.mp3',
     ),
     const SoundModel(
       id: 'brown_noise',
@@ -162,6 +164,7 @@ class SoundData {
       name: 'Desert Wind',
       icon: Icons.terrain_outlined,
       category: 'desert',
+      audioPath: '$basePath/desert-wind.mp3',
     ),
     const SoundModel(
       id: 'desert_night',
