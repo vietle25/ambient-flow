@@ -26,6 +26,7 @@
   <meta name="apple-mobile-web-app-title" content="ambientflow">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
+
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
@@ -33,6 +34,26 @@
   <link rel="manifest" href="manifest.json">
 </head>
 <body style="background-color: #333333;">
+  <!-- Firebase SDK - Using the latest version -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+
+  <!-- Initialize Firebase -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCUHcD1lE_pRHm1iGr5_9gpVq6AzN805nQ",
+      authDomain: "ambient-flow-d9e78.firebaseapp.com",
+      projectId: "ambient-flow-d9e78",
+      storageBucket: "ambient-flow-d9e78.firebasestorage.app",
+      messagingSenderId: "685587131461",
+      appId: "1:685587131461:web:2c5ecea7bb11da97dac72c",
+      measurementId: "G-QGEHWJR4VS"
+    };
+
+    // Initialize Firebase with compat version
+    firebase.initializeApp(firebaseConfig);
+  </script>
+
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

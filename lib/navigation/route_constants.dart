@@ -5,5 +5,6 @@ class RouteConstants {
 
   // Add more routes as needed
   static const String settings = '/settings';
+  static const String cookiePolicy = '/cookie-policy';
   // static const String profile = '/profile';
 }

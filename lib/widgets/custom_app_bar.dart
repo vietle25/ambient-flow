@@ -8,6 +8,7 @@ import '../constants/app_styles.dart';
 import '../navigation/route_constants.dart';
 import '../screens/home/cubit/home_cubit.dart';
 import '../screens/home/cubit/home_state.dart';
+import 'auth/login_button.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   const CustomAppBar({super.key});
@@ -17,59 +18,28 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: Colors.transparent,
       elevation: 0,
-      title: const Text(AppStrings.appTitle, style: AppStyles.appBarTitle),
+      title: GestureDetector(
+        onTap: () => context.router.navigateNamed(RouteConstants.home),
+        child: const Text(AppStrings.appTitle, style: AppStyles.appBarTitle),
+      ),
       centerTitle: false,
       actions: <Widget>[
         BlocBuilder<HomeCubit, HomeState>(
-          buildWhen: (HomeState previous, HomeState current) =>
-              previous.isPlaying != current.isPlaying ||
-              previous.timerRemaining != current.timerRemaining,
-          builder: (BuildContext context, HomeState state) {
-            return GestureDetector(
-              onTap: () => BlocProvider.of<HomeCubit>(context).toggleTimer(),
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                decoration: BoxDecoration(
-                  color: AppColors.primaryBackground,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  children: <Widget>[
-                    Icon(state.isPlaying ? Icons.pause : Icons.play_arrow,
-                        color: Colors.white),
-                    const SizedBox(width: 8),
-                    Text(
-                        '${(state.timerRemaining ~/ 60).toString().padLeft(2, '0')}:${(state.timerRemaining % 60).toString().padLeft(2, '0')}',
-                        style: const TextStyle(color: Colors.white)),
-                  ],
-                ),
-              ),
-            );
-          },
-        ),
-        const SizedBox(width: 16),
-        Container(
-          margin: const EdgeInsets.only(right: 16),
-          child: ElevatedButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: AppColors.secondaryBackground,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-            ),
-            child: const Text('Upgrade'),
-          ),
-        ),
-        BlocBuilder<HomeCubit, HomeState>(
-          buildWhen: (HomeState previous, HomeState current) =>
-              previous.volume != current.volume,
+          buildWhen: (HomeState previous, HomeState current) => previous.volume != current.volume,
           builder: (BuildContext context, HomeState state) {
             return PopupMenuButton<double>(
               icon: const Icon(Icons.volume_up, color: Colors.white),
               tooltip: 'Volume',
+              // Set offset to position the menu below the app bar
+              offset: const Offset(0, 8),
+              // Use a shape with rounded corners
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              // Set elevation for better shadow
+              elevation: 8,
+              // Set position to ensure it appears below the app bar
+              position: PopupMenuPosition.under,
               itemBuilder: (BuildContext context) => <PopupMenuEntry<double>>[
                 PopupMenuItem<double>(
                   enabled: false,
@@ -90,17 +60,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             );
           },
         ),
-        // Settings menu
-        IconButton(
-          onPressed: () =>
-              context.router.navigateNamed(RouteConstants.settings),
-          icon: const Icon(Icons.settings, color: Colors.white),
-        ),
-        // Full screen toggle
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.fullscreen, color: Colors.white),
-        ),
+        // Login button
+        const LoginButton(),
       ],
     );
   }

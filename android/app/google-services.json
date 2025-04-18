@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "685587131461",
+    "project_id": "ambient-flow-d9e78",
+    "storage_bucket": "ambient-flow-d9e78.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:685587131461:android:3549201f4e3b46c8dac72c",
+        "android_client_info": {
+          "package_name": "com.colossus.ambientflow"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "685587131461-i9ebj6u9dv2nddav99nrug3u575h04ia.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD1Me73m6zGlC4gNYR9wyKnLauj_kKSDMY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "685587131461-i9ebj6u9dv2nddav99nrug3u575h04ia.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

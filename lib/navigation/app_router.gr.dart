@@ -15,6 +15,12 @@ abstract class _$AppRouter extends RootStackRouter {
 
   @override
   final Map<String, PageFactory> pagesMap = {
+    CookiePolicyRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const CookiePolicyPage(),
+      );
+    },
     HomeRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -28,6 +34,20 @@ abstract class _$AppRouter extends RootStackRouter {
       );
     },
   };
+}
+
+/// generated route for
+/// [CookiePolicyPage]
+class CookiePolicyRoute extends PageRouteInfo<void> {
+  const CookiePolicyRoute({List<PageRouteInfo>? children})
+      : super(
+          CookiePolicyRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'CookiePolicyRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
 }
 
 /// generated route for

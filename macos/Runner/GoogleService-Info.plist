@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>685587131461-v4q94mio7gmhqm8456gka4dcgft6qi23.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.685587131461-v4q94mio7gmhqm8456gka4dcgft6qi23</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAQK65Nd4eMxT2E_6avqwNb462UMV8IDx8</string>
+	<key>GCM_SENDER_ID</key>
+	<string>685587131461</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.colossus.ambientflow.ambientflow</string>
+	<key>PROJECT_ID</key>
+	<string>ambient-flow-d9e78</string>
+	<key>STORAGE_BUCKET</key>
+	<string>ambient-flow-d9e78.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:685587131461:ios:334bc0a577ca4ee9dac72c</string>
+</dict>
+</plist>

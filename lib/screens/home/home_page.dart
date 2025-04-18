@@ -61,13 +61,10 @@ class _HomePageState extends State<HomePage> {
                   // Animated background
                   const AnimatedBackgroundWidget(),
                   // Content
-                  Container(
-                    margin: const EdgeInsets.only(top: kToolbarHeight + 50),
-                    child: MainContentSection(
-                      isMobile: isMobile,
-                      isTablet: isTablet,
-                      isDesktop: isDesktop,
-                    ),
+                  MainContentSection(
+                    isMobile: isMobile,
+                    isTablet: isTablet,
+                    isDesktop: isDesktop,
                   ),
                 ],
               ),

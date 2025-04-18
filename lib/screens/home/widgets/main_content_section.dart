@@ -1,13 +1,13 @@
 import 'package:ambientflow/data/sound_data.dart';
 import 'package:ambientflow/models/sound_model.dart';
-import 'package:ambientflow/screens/home/cubit/home_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../cubit/home_cubit.dart';
+import '../cubit/home_state.dart';
 import 'audio_button/audio_button_with_volume.dart';
 
-class MainContentSection extends StatelessWidget {
+class MainContentSection extends StatefulWidget {
   final bool isMobile;
   final bool isTablet;
   final bool isDesktop;
@@ -20,64 +20,87 @@ class MainContentSection extends StatelessWidget {
   });
 
   @override
+  State<MainContentSection> createState() => _MainContentSectionState();
+}
+
+class _MainContentSectionState extends State<MainContentSection> {
+  // Cache the sound buttons to prevent rebuilding them on every scroll
+  late final List<Widget> _soundButtons;
+
+  @override
+  void initState() {
+    super.initState();
+    // Pre-build the sound buttons once
+    _soundButtons = _buildSoundButtons();
+  }
+
+  @override
   Widget build(BuildContext context) {
     // Determine grid columns based on screen size
     int crossAxisCount = 4; // More columns for desktop
 
-    if (isMobile) {
+    if (widget.isMobile) {
       crossAxisCount = 2;
-    } else if (isTablet) {
+    } else if (widget.isTablet) {
       crossAxisCount = 3;
     }
 
     // Calculate the max width based on screen size
     // For desktop, we want it to take up only 50% of the screen width
     double maxWidth = MediaQuery.of(context).size.width;
-    if (isDesktop) {
+    if (widget.isDesktop) {
       maxWidth = maxWidth * 0.6;
-    } else if (isTablet) {
+    } else if (widget.isTablet) {
       maxWidth = maxWidth * 0.8;
     }
 
-    return Center(
-      child: Container(
-        constraints: BoxConstraints(maxWidth: maxWidth),
-        child: ScrollConfiguration(
-          behavior: ScrollConfiguration.of(context).copyWith(
-            scrollbars: false,
-          ),
-          child: GridView.count(
-            padding: EdgeInsets.symmetric(
-              horizontal: isMobile ? 12 : 16,
-              vertical: isMobile ? 16 : 20,
-            ),
-            crossAxisCount: crossAxisCount,
-            mainAxisSpacing: isMobile ? 12 : 16,
-            crossAxisSpacing: isMobile ? 12 : 16,
-            childAspectRatio: 1.0, // Square aspect ratio for buttons
-            physics: const BouncingScrollPhysics(),
-            children: _buildSoundButtons(context),
-          ),
+    return ScrollConfiguration(
+      behavior: ScrollConfiguration.of(context).copyWith(
+        scrollbars: false,
+      ),
+      child: GridView.builder(
+        padding: EdgeInsets.symmetric(
+          horizontal: maxWidth / 2.5,
+          vertical: kToolbarHeight + 40,
         ),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: crossAxisCount,
+          mainAxisSpacing: widget.isMobile ? 12 : 16,
+          crossAxisSpacing: widget.isMobile ? 12 : 16,
+          childAspectRatio: 1.0, // Square aspect ratio for buttons
+        ),
+        physics: const BouncingScrollPhysics(),
+        itemCount: _soundButtons.length,
+        itemBuilder: (BuildContext context, int index) => _soundButtons[index],
+        addAutomaticKeepAlives: true,
+        cacheExtent: 500, // Increase cache extent to reduce rebuilds
       ),
     );
   }
 
-  List<Widget> _buildSoundButtons(BuildContext context) {
-    final HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
-
+  List<Widget> _buildSoundButtons() {
     return SoundData.sounds.map((SoundModel sound) {
       return BlocBuilder<HomeCubit, HomeState>(
-          builder: (BuildContext context, HomeState state) {
-        final bool isActive = state.activeSounds.contains(sound.id);
-        return AudioButtonWithVolume(
-          key: ValueKey<String>(sound.id),
-          sound: sound,
-          onTapItem: () =>
-              cubit.onTapItem(soundId: sound.id, isActive: isActive),
-          isActive: isActive,
-        );
-      });
+        key: ValueKey<String>('sound_state_${sound.id}'),
+        buildWhen: (HomeState previous, HomeState current) {
+          // Only rebuild when the active state of this specific sound changes
+          final bool wasActive = previous.activeSounds.contains(sound.id);
+          final bool isActive = current.activeSounds.contains(sound.id);
+          return wasActive != isActive;
+        },
+        builder: (BuildContext context, HomeState state) {
+          final bool isActive = state.activeSounds.contains(sound.id);
+          return AudioButtonWithVolume(
+            key: ValueKey<String>(sound.id),
+            sound: sound,
+            isActive: isActive,
+            onTapItem: () {
+              // Toggle the sound in the HomeCubit
+              context.read<HomeCubit>().toggleSound(sound.id);
+            },
+          );
+        },
+      );
     }).toList();
   }
 }
