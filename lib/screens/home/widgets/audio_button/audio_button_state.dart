@@ -2,31 +2,30 @@ part of 'audio_button_cubit.dart';
 
 class AudioButtonState extends Equatable {
   final double volume;
-  final bool isPlaying;
   final bool isLoaded;
-
+  final bool isActive;
   const AudioButtonState({
     this.volume = 50,
-    this.isPlaying = false,
     this.isLoaded = false,
+    this.isActive = false,
   });
 
   AudioButtonState copyWith({
     double? volume,
-    bool? isPlaying,
     bool? isLoaded,
+    bool? isActive,
   }) {
     return AudioButtonState(
       volume: volume ?? this.volume,
-      isPlaying: isPlaying ?? this.isPlaying,
       isLoaded: isLoaded ?? this.isLoaded,
+      isActive: isActive ?? this.isActive,
     );
   }
 
   @override
   List<Object?> get props => <Object?>[
         volume,
-        isPlaying,
         isLoaded,
+        isActive,
       ];
 }

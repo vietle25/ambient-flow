@@ -1,11 +1,8 @@
 import 'package:ambientflow/data/sound_data.dart';
 import 'package:ambientflow/models/sound_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../cubit/home_cubit.dart';
-import '../cubit/home_state.dart';
-import 'audio_button/audio_button_with_volume.dart';
+import 'audio_button/audio_button_widget.dart';
 
 class MainContentSection extends StatefulWidget {
   final bool isMobile;
@@ -80,26 +77,9 @@ class _MainContentSectionState extends State<MainContentSection> {
 
   List<Widget> _buildSoundButtons() {
     return SoundData.sounds.map((SoundModel sound) {
-      return BlocBuilder<HomeCubit, HomeState>(
-        key: ValueKey<String>('sound_state_${sound.id}'),
-        buildWhen: (HomeState previous, HomeState current) {
-          // Only rebuild when the active state of this specific sound changes
-          final bool wasActive = previous.activeSounds.contains(sound.id);
-          final bool isActive = current.activeSounds.contains(sound.id);
-          return wasActive != isActive;
-        },
-        builder: (BuildContext context, HomeState state) {
-          final bool isActive = state.activeSounds.contains(sound.id);
-          return AudioButtonWithVolume(
-            key: ValueKey<String>(sound.id),
-            sound: sound,
-            isActive: isActive,
-            onTapItem: () {
-              // Toggle the sound in the HomeCubit
-              context.read<HomeCubit>().toggleSound(sound.id);
-            },
-          );
-        },
+      return AudioButtonWidget(
+        key: ValueKey<String>(sound.id),
+        sound: sound,
       );
     }).toList();
   }

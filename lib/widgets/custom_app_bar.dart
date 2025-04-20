@@ -2,7 +2,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../constants/app_colors.dart';
 import '../constants/app_strings.dart';
 import '../constants/app_styles.dart';
 import '../navigation/route_constants.dart';
@@ -25,7 +24,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       centerTitle: false,
       actions: <Widget>[
         BlocBuilder<HomeCubit, HomeState>(
-          buildWhen: (HomeState previous, HomeState current) => previous.volume != current.volume,
+          buildWhen: (HomeState previous, HomeState current) =>
+              previous.volume != current.volume,
           builder: (BuildContext context, HomeState state) {
             return PopupMenuButton<double>(
               icon: const Icon(Icons.volume_up, color: Colors.white),
@@ -61,7 +61,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           },
         ),
         // Login button
-        const LoginButton(),
+        LoginButton(),
       ],
     );
   }
