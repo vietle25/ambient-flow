@@ -20,7 +20,7 @@ class AudioButtonCubit extends Cubit<AudioButtonState> {
   Future<void> initialize(SoundModel sound) async {
     _sound = sound;
     await audioService.initialize();
-    await loadAudio();
+    loadAudio();
 
     // Check if this sound is active in the global app state
     final bool isActive = appState.isSoundActive(sound.id);
@@ -41,16 +41,17 @@ class AudioButtonCubit extends Cubit<AudioButtonState> {
   Future<void> toggleSound() async {
     // Toggle active state
     final bool newActiveState = !state.isActive;
+    emit(state.copyWith(isActive: newActiveState));
 
     if (newActiveState) {
       appState.addActiveSound(_sound.id);
-      await _playSound();
+      await Future<void>.delayed(const Duration(milliseconds: 500));
+      _playSound();
     } else {
       appState.removeActiveSound(_sound.id);
-      await _stopSound();
+      await Future<void>.delayed(const Duration(milliseconds: 500));
+      _stopSound();
     }
-
-    emit(state.copyWith(isActive: newActiveState));
   }
 
   Future<void> _playSound() async {
@@ -59,19 +60,19 @@ class AudioButtonCubit extends Cubit<AudioButtonState> {
       if (!loaded) return;
     }
 
-    await audioService.setVolume(_sound.id, state.volume / 100);
-    await audioService.playSound(_sound.id);
+    audioService.playSound(_sound.id);
+    audioService.setVolume(_sound.id, state.volume / 100);
   }
 
   /// Stop the sound
   Future<void> _stopSound() async {
-    await audioService.stopSound(_sound.id);
+    audioService.stopSound(_sound.id);
   }
 
   /// Change the volume
   Future<void> onChangeVolume(double volume) async {
-    await audioService.setVolume(_sound.id, volume / 100);
     emit(state.copyWith(volume: volume));
+    audioService.setVolume(_sound.id, volume / 100);
   }
 
   @override
@@ -81,5 +82,9 @@ class AudioButtonCubit extends Cubit<AudioButtonState> {
     }
     await audioService.dispose();
     return super.close();
+  }
+
+  void onHoverChange(bool val) {
+    emit(state.copyWith(isHover: val));
   }
 }

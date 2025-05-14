@@ -4,21 +4,26 @@ class AudioButtonState extends Equatable {
   final double volume;
   final bool isLoaded;
   final bool isActive;
+  final bool isHover;
+
   const AudioButtonState({
     this.volume = 50,
     this.isLoaded = false,
     this.isActive = false,
+    this.isHover = false,
   });
 
   AudioButtonState copyWith({
     double? volume,
     bool? isLoaded,
     bool? isActive,
+    bool? isHover,
   }) {
     return AudioButtonState(
       volume: volume ?? this.volume,
       isLoaded: isLoaded ?? this.isLoaded,
       isActive: isActive ?? this.isActive,
+      isHover: isHover ?? this.isHover,
     );
   }
 
@@ -27,5 +32,6 @@ class AudioButtonState extends Equatable {
         volume,
         isLoaded,
         isActive,
+        isHover,
       ];
 }

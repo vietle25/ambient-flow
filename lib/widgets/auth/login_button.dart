@@ -24,12 +24,15 @@ class LoginButton extends StatelessWidget {
       child: BlocBuilder<AuthCubit, AuthState>(
         builder: (BuildContext context, AuthState state) {
           if (state.isLoading) {
-            return const SizedBox(
-              width: 24,
-              height: 24,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                color: Colors.white,
+            return const Padding(
+              padding: EdgeInsets.only(right: 16.0),
+              child: SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
               ),
             );
           }

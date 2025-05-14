@@ -122,12 +122,4 @@ class HomeCubit extends Cubit<HomeState> {
     _timer?.cancel();
     return super.close();
   }
-
-  void onTapItem({required String soundId, required bool isActive}) {
-    toggleSound(soundId);
-
-    if (!isActive) {
-      toggleVolumeControl(soundId);
-    }
-  }
 }

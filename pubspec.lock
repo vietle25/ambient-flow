@@ -995,6 +995,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.99"
+  slider_bar:
+    dependency: "direct main"
+    description:
+      name: slider_bar
+      sha256: "1a1529c4d18bd68d18b30edf309f90acbbfc33557cef14ab0e0037faf384db37"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.3"
   source_gen:
     dependency: transitive
     description:

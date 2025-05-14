@@ -45,7 +45,8 @@ class _HomePageState extends State<HomePage> {
           builder: (BuildContext context, BoxConstraints constraints) {
             // Determine if we're on a mobile, tablet, or desktop
             final bool isDesktop = constraints.maxWidth > 1100;
-            final bool isTablet = constraints.maxWidth > 650 && constraints.maxWidth <= 1100;
+            final bool isTablet =
+                constraints.maxWidth > 650 && constraints.maxWidth <= 1100;
             final bool isMobile = constraints.maxWidth <= 650;
 
             return Scaffold(

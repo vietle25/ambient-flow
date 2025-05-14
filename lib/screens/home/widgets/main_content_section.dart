@@ -1,10 +1,11 @@
 import 'package:ambientflow/data/sound_data.dart';
 import 'package:ambientflow/models/sound_model.dart';
+import 'package:colossus_flutter_common/base/base.dart';
 import 'package:flutter/material.dart';
 
 import 'audio_button/audio_button_widget.dart';
 
-class MainContentSection extends StatefulWidget {
+class MainContentSection extends CommonPage {
   final bool isMobile;
   final bool isTablet;
   final bool isDesktop;
@@ -18,21 +19,16 @@ class MainContentSection extends StatefulWidget {
 
   @override
   State<MainContentSection> createState() => _MainContentSectionState();
+
+  @override
+  // TODO: implement routeSettings
+  RouteSettings get routeSettings => throw UnimplementedError();
 }
 
-class _MainContentSectionState extends State<MainContentSection> {
-  // Cache the sound buttons to prevent rebuilding them on every scroll
-  late final List<Widget> _soundButtons;
-
+class _MainContentSectionState extends CommonPageState<MainContentSection> {
   @override
-  void initState() {
-    super.initState();
-    // Pre-build the sound buttons once
-    _soundButtons = _buildSoundButtons();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget body(BuildContext context) {
+    logD('Build MainContentSection');
     // Determine grid columns based on screen size
     int crossAxisCount = 4; // More columns for desktop
 
@@ -67,20 +63,16 @@ class _MainContentSectionState extends State<MainContentSection> {
           childAspectRatio: 1.0, // Square aspect ratio for buttons
         ),
         physics: const BouncingScrollPhysics(),
-        itemCount: _soundButtons.length,
-        itemBuilder: (BuildContext context, int index) => _soundButtons[index],
+        itemCount: SoundData.sounds.length,
+        itemBuilder: (BuildContext context, int index) {
+          final SoundModel sound = SoundData.sounds[index];
+          return AudioButtonWidget(
+            key: ValueKey<String>(sound.id),
+            sound: sound,
+          );
+        },
         addAutomaticKeepAlives: true,
-        cacheExtent: 500, // Increase cache extent to reduce rebuilds
       ),
     );
-  }
-
-  List<Widget> _buildSoundButtons() {
-    return SoundData.sounds.map((SoundModel sound) {
-      return AudioButtonWidget(
-        key: ValueKey<String>(sound.id),
-        sound: sound,
-      );
-    }).toList();
   }
 }
