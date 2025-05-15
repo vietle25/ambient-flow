@@ -6,16 +6,17 @@ class HomeState extends Equatable {
   final bool isPlaying;
   final int timerDuration; // in seconds
   final int timerRemaining; // in seconds
-  final String?
-      activeVolumeControlSoundId; // Track which sound's volume control is active
+  final String? activeVolumeControlSoundId; // Track which sound's volume control is active
+  final bool isMuted; // Track if the volume is muted
 
   const HomeState({
     this.activeSounds = const <String>[],
-    this.volume = 0.5,
+    this.volume = 50,
     this.isPlaying = false,
     this.timerDuration = 1500, // 25 minutes by default
     this.timerRemaining = 1500,
     this.activeVolumeControlSoundId,
+    this.isMuted = false,
   });
 
   HomeState copyWith({
@@ -25,6 +26,7 @@ class HomeState extends Equatable {
     int? timerDuration,
     int? timerRemaining,
     String? activeVolumeControlSoundId,
+    bool? isMuted,
   }) {
     return HomeState(
       activeSounds: activeSounds ?? this.activeSounds,
@@ -32,8 +34,8 @@ class HomeState extends Equatable {
       isPlaying: isPlaying ?? this.isPlaying,
       timerDuration: timerDuration ?? this.timerDuration,
       timerRemaining: timerRemaining ?? this.timerRemaining,
-      activeVolumeControlSoundId:
-          activeVolumeControlSoundId ?? this.activeVolumeControlSoundId,
+      activeVolumeControlSoundId: activeVolumeControlSoundId ?? this.activeVolumeControlSoundId,
+      isMuted: isMuted ?? this.isMuted,
     );
   }
 
@@ -45,5 +47,6 @@ class HomeState extends Equatable {
         timerDuration,
         timerRemaining,
         activeVolumeControlSoundId,
+        isMuted,
       ];
 }

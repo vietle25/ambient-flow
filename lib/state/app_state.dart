@@ -1,8 +1,12 @@
 class AppState {
   Set<String>? activeSoundIds;
+  double appVolume = 50;
+  double previousVolume = 50; // Store previous volume level for mute/unmute toggle
 
   AppState({
     this.activeSoundIds,
+    this.appVolume = 50,
+    this.previousVolume = 50,
   });
 
   void addActiveSound(String soundId) {

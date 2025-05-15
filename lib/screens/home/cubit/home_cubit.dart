@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:ambientflow/state/app_state.dart';
 import 'package:bloc/bloc.dart';
 
 import 'home_state.dart';
@@ -7,7 +8,11 @@ import 'home_state.dart';
 class HomeCubit extends Cubit<HomeState> {
   Timer? _timer;
 
-  HomeCubit() : super(const HomeState());
+  final AppState appState;
+
+  HomeCubit({
+    required this.appState,
+  }) : super(const HomeState());
 
   // Toggle a sound on/off
   void toggleSound(String soundId) {
@@ -64,14 +69,7 @@ class HomeCubit extends Cubit<HomeState> {
     emit(state.copyWith(activeSounds: <String>[]));
   }
 
-  // Save the current sound combination (placeholder for future implementation)
-  void saveSoundCombination(String name) {
-    // This would typically save to a database or local storage
-    // For now, we'll just log the combination
-    // In a real app, use a proper logging framework
-    // ignore: avoid_print
-    print('Saved sound combination "$name": ${state.activeSounds}');
-  }
+  // This function was removed as it was unused and only a placeholder
 
   // Toggle the volume control sidebar for a specific sound
   void toggleVolumeControl(String soundId) {
@@ -121,5 +119,30 @@ class HomeCubit extends Cubit<HomeState> {
   Future<void> close() {
     _timer?.cancel();
     return super.close();
+  }
+
+  void setAppVolume(double volume) {
+    appState.appVolume = volume;
+    emit(state.copyWith(volume: volume));
+  }
+
+  // Toggle mute/unmute
+  void toggleMute() {
+    final bool newMutedState = !state.isMuted;
+
+    // Store the previous volume level if we're muting
+    if (newMutedState) {
+      // Only store if volume is not already 0
+      if (state.volume > 0) {
+        appState.previousVolume = state.volume;
+      }
+      appState.appVolume = 0;
+      emit(state.copyWith(isMuted: true, volume: 0));
+    } else {
+      // Restore previous volume or set to default if none stored
+      final double restoredVolume = appState.previousVolume > 0 ? appState.previousVolume : 50;
+      appState.appVolume = restoredVolume;
+      emit(state.copyWith(isMuted: false, volume: restoredVolume));
+    }
   }
 }

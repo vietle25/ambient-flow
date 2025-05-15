@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:slider_bar/slider_bar.dart';
 
 import '../constants/app_strings.dart';
 import '../constants/app_styles.dart';
@@ -25,36 +26,54 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       actions: <Widget>[
         BlocBuilder<HomeCubit, HomeState>(
           buildWhen: (HomeState previous, HomeState current) =>
-              previous.volume != current.volume,
+              previous.volume != current.volume || previous.isMuted != current.isMuted,
           builder: (BuildContext context, HomeState state) {
-            return PopupMenuButton<double>(
-              icon: const Icon(Icons.volume_up, color: Colors.white),
-              tooltip: 'Volume',
-              // Set offset to position the menu below the app bar
-              offset: const Offset(0, 8),
-              // Use a shape with rounded corners
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              // Set elevation for better shadow
-              elevation: 8,
-              // Set position to ensure it appears below the app bar
-              position: PopupMenuPosition.under,
-              itemBuilder: (BuildContext context) => <PopupMenuEntry<double>>[
-                PopupMenuItem<double>(
-                  enabled: false,
-                  child: SizedBox(
-                    width: 200,
-                    child: Slider(
-                      value: state.volume,
-                      min: 0.0,
-                      max: 1.0,
-                      divisions: 10,
-                      onChanged: (double value) {
-                        BlocProvider.of<HomeCubit>(context).setVolume(value);
-                      },
+            return Row(
+              children: [
+                // Volume slider - always visible
+                SizedBox(
+                  width: 120,
+                  child: SliderBar(
+                    config: SliderConfig(
+                      min: 0,
+                      max: 100,
+                      initialValue: state.volume,
+                      direction: SliderDirection.horizontal,
+                      trackConfig: TrackConfig(
+                        activeColor: Colors.white.withOpacity(0.8),
+                        inactiveColor: Colors.grey.shade400.withOpacity(0.5),
+                        height: 5,
+                        radius: 10,
+                      ),
+                      thumbConfig: const ThumbConfig(
+                        color: Colors.white,
+                        width: 12,
+                        height: 12,
+                        shape: BoxShape.circle,
+                        radius: 18,
+                        elevation: 2,
+                        shadowColor: Colors.black26,
+                      ),
                     ),
+                    onChanged: (double value) {
+                      context.read<HomeCubit>().setAppVolume(value);
+                      // If volume is adjusted and was muted, unmute it
+                      if (state.isMuted && value > 0) {
+                        context.read<HomeCubit>().toggleMute();
+                      }
+                    },
                   ),
+                ),
+                // Volume icon - toggles mute/unmute
+                IconButton(
+                  icon: Icon(
+                    state.isMuted ? Icons.volume_off : Icons.volume_up,
+                    color: Colors.white,
+                  ),
+                  tooltip: state.isMuted ? 'Unmute' : 'Mute',
+                  onPressed: () {
+                    context.read<HomeCubit>().toggleMute();
+                  },
                 ),
               ],
             );

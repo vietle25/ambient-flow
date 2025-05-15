@@ -1,3 +1,5 @@
+import 'package:ambientflow/services/di/service_locator.dart';
+import 'package:ambientflow/state/app_state.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,7 +20,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final HomeCubit homeCubit = HomeCubit();
+  final HomeCubit homeCubit = HomeCubit(
+    appState: getIt<AppState>(),
+  );
   final BackgroundCubit backgroundCubit = BackgroundCubit();
 
   @override
@@ -45,8 +49,7 @@ class _HomePageState extends State<HomePage> {
           builder: (BuildContext context, BoxConstraints constraints) {
             // Determine if we're on a mobile, tablet, or desktop
             final bool isDesktop = constraints.maxWidth > 1100;
-            final bool isTablet =
-                constraints.maxWidth > 650 && constraints.maxWidth <= 1100;
+            final bool isTablet = constraints.maxWidth > 650 && constraints.maxWidth <= 1100;
             final bool isMobile = constraints.maxWidth <= 650;
 
             return Scaffold(
