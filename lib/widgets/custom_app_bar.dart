@@ -26,13 +26,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       actions: <Widget>[
         BlocBuilder<HomeCubit, HomeState>(
           buildWhen: (HomeState previous, HomeState current) =>
-              previous.volume != current.volume || previous.isMuted != current.isMuted,
+              previous.volume != current.volume ||
+              previous.isMuted != current.isMuted,
           builder: (BuildContext context, HomeState state) {
             return Row(
               children: [
                 // Volume slider - always visible
                 SizedBox(
-                  width: 120,
+                  width: 160,
                   child: SliderBar(
                     config: SliderConfig(
                       min: 0,
@@ -62,8 +63,23 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                         context.read<HomeCubit>().toggleMute();
                       }
                     },
+                    onChangeStart: (double value) {
+                      context.read<HomeCubit>().setAppVolume(value);
+                      // If volume is adjusted and was muted, unmute it
+                      if (state.isMuted && value > 0) {
+                        context.read<HomeCubit>().toggleMute();
+                      }
+                    },
+                    onChangeEnd: (double value) {
+                      context.read<HomeCubit>().setAppVolume(value);
+                      // If volume is adjusted and was muted, unmute it
+                      if (state.isMuted && value > 0) {
+                        context.read<HomeCubit>().toggleMute();
+                      }
+                    },
                   ),
                 ),
+                const SizedBox(width: 12),
                 // Volume icon - toggles mute/unmute
                 IconButton(
                   icon: Icon(
