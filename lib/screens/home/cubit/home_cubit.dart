@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:ambientflow/services/audio/audio_service.dart';
 import 'package:ambientflow/state/app_state.dart';
 import 'package:bloc/bloc.dart';
 
@@ -10,25 +9,27 @@ class HomeCubit extends Cubit<HomeState> {
   Timer? _timer;
 
   final AppState appState;
-  final AudioService audioService;
 
   HomeCubit({
     required this.appState,
-    required this.audioService,
   }) : super(const HomeState());
 
-  // Note: Sound toggling is handled by AudioButtonCubit
+  // Toggle a sound on/off
+  void toggleSound(String soundId) {
+    final List<String> currentSounds = List<String>.from(state.activeSounds);
+
+    if (currentSounds.contains(soundId)) {
+      currentSounds.remove(soundId);
+    } else {
+      currentSounds.add(soundId);
+    }
+
+    emit(state.copyWith(activeSounds: currentSounds));
+  }
 
   // Set the volume level
   void setVolume(double volume) {
-    // This method is used for individual sound volume controls
-    // Update UI state
     emit(state.copyWith(volume: volume));
-
-    // If not muted, update all active sounds with this volume
-    if (!state.isMuted) {
-      _updateAllActiveSoundsVolume(volume);
-    }
   }
 
   // Start or pause the timer
@@ -65,14 +66,7 @@ class HomeCubit extends Cubit<HomeState> {
 
   // Clear all active sounds
   void clearSounds() {
-    // Stop all active sounds
-    if (appState.activeSoundIds != null) {
-      for (final String soundId in appState.activeSoundIds!) {
-        audioService.stopSound(soundId);
-      }
-      // Clear the active sounds in AppState
-      appState.activeSoundIds?.clear();
-    }
+    emit(state.copyWith(activeSounds: <String>[]));
   }
 
   // This function was removed as it was unused and only a placeholder
@@ -130,13 +124,7 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   void setAppVolume(double volume) {
-    // Update app state
     appState.appVolume = volume;
-
-    // Update all active sounds
-    _updateAllActiveSoundsVolume(volume);
-
-    // Update UI state
     emit(state.copyWith(volume: volume));
   }
 
@@ -146,31 +134,27 @@ class HomeCubit extends Cubit<HomeState> {
 
     // Store the previous volume level if we're muting
     if (newMutedState) {
-      _updateAllActiveSoundsVolume(0);
-
-      emit(state.copyWith(isMuted: true));
-    } else {
-      // Unmute all active sounds
-      _updateAllActiveSoundsVolume(appState.appVolume);
-
-      // Update UI state
-      emit(state.copyWith(isMuted: false));
-    }
-  }
-
-  // Helper method to update volume for all active sounds
-  void _updateAllActiveSoundsVolume(double volume) {
-    // Convert volume from 0-100 scale to 0-1 scale for audio service
-    final double normalizedVolume = volume / 100;
-
-    // Apply volume to all active sounds from AppState
-    if (appState.activeSoundIds != null) {
-      for (final String soundId in appState.activeSoundIds!) {
-        audioService.setVolume(soundId, normalizedVolume);
+      // Only store if volume is not already 0
+      if (state.volume > 0) {
+        appState.previousVolume = state.volume;
       }
+      appState.appVolume = 0;
+      emit(state.copyWith(isMuted: true, volume: 0));
+    } else {
+      // Restore previous volume or set to default if none stored
+      final double restoredVolume =
+          appState.previousVolume > 0 ? appState.previousVolume : 50;
+      appState.appVolume = restoredVolume;
+      emit(state.copyWith(isMuted: false, volume: restoredVolume));
     }
   }
 
-  // Getter to check if the app is muted
-  bool get isMuted => state.isMuted;
+  /// Syncs the home cubit state with the global app state.
+  /// This should be called when bookmarks are applied.
+  void syncWithAppState() {
+    final double currentAppVolume = appState.appVolume;
+    if (state.volume != currentAppVolume) {
+      emit(state.copyWith(volume: currentAppVolume));
+    }
+  }
 }

@@ -9,6 +9,7 @@ class JustAudioService with LogMixin implements AudioService {
   final Map<String, AudioPlayer> _players = <String, AudioPlayer>{};
   final Map<String, SoundModel> _loadedSounds = <String, SoundModel>{};
   bool _isInitialized = false;
+  bool _isDisposing = false;
 
   @override
   Future<void> initialize() async {
@@ -48,13 +49,14 @@ class JustAudioService with LogMixin implements AudioService {
 
   @override
   Future<bool> playSound(String soundId) async {
-    if (!_loadedSounds.containsKey(soundId)) {
-      logD('Sound $soundId not loaded');
+    if (_isDisposing || !_loadedSounds.containsKey(soundId)) {
+      logD('Sound $soundId not loaded or service is disposing');
       return false;
     }
 
     try {
-      final AudioPlayer player = _players[soundId]!;
+      final AudioPlayer? player = _players[soundId];
+      if (player == null) return false;
       await player.play();
       return true;
     } catch (e) {
@@ -65,12 +67,13 @@ class JustAudioService with LogMixin implements AudioService {
 
   @override
   Future<bool> stopSound(String soundId) async {
-    if (!_loadedSounds.containsKey(soundId)) {
+    if (_isDisposing || !_loadedSounds.containsKey(soundId)) {
       return false;
     }
 
     try {
-      final AudioPlayer player = _players[soundId]!;
+      final AudioPlayer? player = _players[soundId];
+      if (player == null) return false;
       await player.stop();
       return true;
     } catch (e) {
@@ -81,14 +84,16 @@ class JustAudioService with LogMixin implements AudioService {
 
   @override
   Future<void> setVolume(String soundId, double volume) async {
-    if (!_loadedSounds.containsKey(soundId)) {
+    if (_isDisposing || !_loadedSounds.containsKey(soundId)) {
       return;
     }
 
     try {
+      final AudioPlayer? player = _players[soundId];
+      if (player == null) return;
       // Ensure volume is between 0.0 and 1.0
       final double normalizedVolume = volume.clamp(0.0, 1.0);
-      await _players[soundId]!.setVolume(normalizedVolume);
+      await player.setVolume(normalizedVolume);
     } catch (e) {
       logE('Error setting volume for sound $soundId: $e');
     }
@@ -111,8 +116,17 @@ class JustAudioService with LogMixin implements AudioService {
 
   @override
   Future<void> dispose() async {
-    for (final AudioPlayer player in _players.values) {
-      await player.dispose();
+    if (_isDisposing) return;
+    _isDisposing = true;
+
+    // Create a copy to avoid concurrent modification
+    final List<AudioPlayer> playersToDispose = List.from(_players.values);
+    for (final AudioPlayer player in playersToDispose) {
+      try {
+        await player.dispose();
+      } catch (e) {
+        // Continue disposing other players even if one fails
+      }
     }
     _players.clear();
     _loadedSounds.clear();

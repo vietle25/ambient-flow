@@ -1,15 +1,20 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../cubits/auth/auth_cubit.dart';
+import '../../cubits/bookmark/bookmark_cubit.dart';
 import '../../repositories/auth/auth_repository.dart';
 import '../../repositories/auth/auth_repository_interface.dart';
 import '../../state/app_state.dart';
+import '../audio/audio_coordinator_service.dart';
 import '../audio/audio_service.dart';
 import '../audio/just_audio_service.dart';
 import '../auth/auth_service_interface.dart';
 import '../auth/firebase_auth_service.dart';
+import '../bookmark/firestore_bookmark_storage_service.dart';
+import '../bookmark/bookmark_storage_service_interface.dart';
 import '../storage/secure_storage_service.dart';
 import '../storage/storage_service_interface.dart';
 
@@ -63,6 +68,22 @@ class ServiceLocator {
     getIt.registerLazySingleton<AudioService>(
       () => JustAudioService(),
     );
+
+    // Audio coordinator service
+    getIt.registerLazySingleton<AudioCoordinatorService>(
+      () => AudioCoordinatorService(
+        audioService: getIt<AudioService>(),
+        appState: getIt<AppState>(),
+      ),
+    );
+
+    // Bookmark storage service
+    getIt.registerLazySingleton<BookmarkStorageServiceInterface>(
+      () => FirestoreBookmarkStorageService(
+        firestore: FirebaseFirestore.instance,
+        authService: getIt<AuthServiceInterface>(),
+      ),
+    );
   }
 
   /// Register all repositories
@@ -81,6 +102,15 @@ class ServiceLocator {
     // App state notifier
     getIt.registerLazySingleton<AppState>(
       () => AppState(),
+    );
+
+    // Register bookmark cubit
+    getIt.registerLazySingleton<BookmarkCubit>(
+      () => BookmarkCubit(
+        bookmarkStorage: getIt<BookmarkStorageServiceInterface>(),
+        audioCoordinator: getIt<AudioCoordinatorService>(),
+        appState: getIt<AppState>(),
+      ),
     );
   }
 
@@ -103,4 +133,15 @@ class ServiceLocator {
 
   /// Gets the audio service.
   AudioService get audioService => getIt<AudioService>();
+
+  /// Gets the audio coordinator service.
+  AudioCoordinatorService get audioCoordinator =>
+      getIt<AudioCoordinatorService>();
+
+  /// Gets the bookmark storage service.
+  BookmarkStorageServiceInterface get bookmarkStorage =>
+      getIt<BookmarkStorageServiceInterface>();
+
+  /// Gets the bookmark cubit.
+  BookmarkCubit get bookmarkCubit => getIt<BookmarkCubit>();
 }

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../constants/app_colors.dart';
 import '../../cubits/auth/auth_cubit.dart';
 import '../../cubits/auth/auth_state.dart';
+import '../../cubits/bookmark/bookmark_cubit.dart';
 import '../../models/user_model.dart';
 import '../../repositories/auth/auth_repository_interface.dart';
 import '../../services/di/service_locator.dart';
@@ -21,28 +22,37 @@ class LoginButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<AuthCubit>(
       create: (BuildContext context) => cubit,
-      child: BlocBuilder<AuthCubit, AuthState>(
-        builder: (BuildContext context, AuthState state) {
-          if (state.isLoading) {
-            return const Padding(
-              padding: EdgeInsets.only(right: 16.0),
-              child: SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: Colors.white,
-                ),
-              ),
-            );
+      child: BlocListener<AuthCubit, AuthState>(
+        listener: (BuildContext context, AuthState state) {
+          // Trigger bookmark migration when user successfully logs in
+          if (state.isAuthenticated && state.user != null) {
+            final BookmarkCubit bookmarkCubit = getIt<BookmarkCubit>();
+            bookmarkCubit.migrateLocalBookmarksToCloud();
           }
-
-          if (state.isAuthenticated) {
-            return _buildUserAvatar(context, state.user);
-          }
-
-          return _buildLoginButton(context);
         },
+        child: BlocBuilder<AuthCubit, AuthState>(
+          builder: (BuildContext context, AuthState state) {
+            if (state.isLoading) {
+              return const Padding(
+                padding: EdgeInsets.only(right: 16.0),
+                child: SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                ),
+              );
+            }
+
+            if (state.isAuthenticated) {
+              return _buildUserAvatar(context, state.user);
+            }
+
+            return _buildLoginButton(context);
+          },
+        ),
       ),
     );
   }

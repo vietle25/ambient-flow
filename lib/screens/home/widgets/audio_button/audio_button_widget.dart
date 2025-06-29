@@ -1,5 +1,4 @@
 import 'package:ambientflow/models/sound_model.dart';
-import 'package:ambientflow/screens/home/cubit/home_cubit.dart';
 import 'package:ambientflow/screens/home/widgets/audio_button/audio_button_cubit.dart';
 import 'package:ambientflow/services/di/service_locator.dart';
 import 'package:ambientflow/state/app_state.dart';
@@ -9,24 +8,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:slider_bar/slider_bar.dart';
 
 import '../../../../constants/app_colors.dart';
+import '../../../../cubits/bookmark/bookmark_cubit.dart';
 import '../../../../services/audio/audio_service.dart';
-
-void main() => runApp(const MyApp());
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Hello Dart',
-      home: Scaffold(
-        appBar: AppBar(title: const Text('🌟 Welcome')),
-        body: const Center(child: Text('Hello, Dart & Flutter! 🚀')),
-      ),
-    );
-  }
-}
 
 class AudioButtonWidget extends StatefulWidget {
   final SoundModel sound;
@@ -42,16 +25,10 @@ class AudioButtonWidget extends StatefulWidget {
 
 class _AudioButtonWidgetState extends State<AudioButtonWidget>
     with AutomaticKeepAliveClientMixin, LogMixin {
-  AudioButtonCubit? _cubit;
-
-  void _initCubit() {
-    final HomeCubit homeCubit = context.read<HomeCubit>();
-    _cubit = AudioButtonCubit(
-      audioService: getIt<AudioService>(),
-      appState: getIt<AppState>(),
-      homeCubit: homeCubit,
-    );
-  }
+  final AudioButtonCubit _cubit = AudioButtonCubit(
+    audioService: getIt<AudioService>(),
+    appState: getIt<AppState>(),
+  );
 
   final SliderController controller = SliderController(
     initialValue: 50,
@@ -65,21 +42,12 @@ class _AudioButtonWidgetState extends State<AudioButtonWidget>
   @override
   void initState() {
     super.initState();
-    // Defer initialization to didChangeDependencies where context is available
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (_cubit == null) {
-      _initCubit();
-      _cubit!.initialize(widget.sound);
-    }
+    _cubit.initialize(widget.sound);
   }
 
   @override
   void dispose() {
-    _cubit?.close();
+    _cubit.close();
     controller.dispose();
     super.dispose();
   }
@@ -89,59 +57,67 @@ class _AudioButtonWidgetState extends State<AudioButtonWidget>
     super.build(context);
     logD('build ${widget.sound.id}');
     return BlocProvider<AudioButtonCubit>(
-      create: (BuildContext context) => _cubit!,
-      child: MouseRegion(
-        onEnter: (_) => onHoverChanged(true),
-        onExit: (_) => onHoverChanged(false),
-        child: BlocBuilder<AudioButtonCubit, AudioButtonState>(
-            builder: (BuildContext context, AudioButtonState state) {
-          return Container(
-            decoration: BoxDecoration(
-              color: state.isActive
-                  ? AppColors.categoryButtonSelected.withOpacity(0.5)
-                  : (state.isHover
-                      ? AppColors.categoryButton.withOpacity(0.3)
-                      : AppColors.categoryButton.withOpacity(0.1)),
-              borderRadius: BorderRadius.circular(20.0),
-              border: Border.all(
-                  color: state.isActive
-                      ? Colors.white.withOpacity(0.3)
-                      : Colors.white.withOpacity(0.1),
-                  width: state.isActive ? 1.0 : 0.5),
-            ),
-            constraints: const BoxConstraints(
-              minWidth: 100,
-              minHeight: 100,
-              maxWidth: 200,
-              maxHeight: 200,
-            ),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
+      create: (BuildContext context) => _cubit,
+      child: BlocListener<BookmarkCubit, BookmarkState>(
+        listener: (BuildContext context, BookmarkState bookmarkState) {
+          // Listen for UI refresh needed status to sync with app state
+          if (bookmarkState.status == BookmarkStatus.uiRefreshNeeded) {
+            _cubit.syncWithAppState();
+          }
+        },
+        child: MouseRegion(
+          onEnter: (_) => onHoverChanged(true),
+          onExit: (_) => onHoverChanged(false),
+          child: BlocBuilder<AudioButtonCubit, AudioButtonState>(
+              builder: (BuildContext context, AudioButtonState state) {
+            return Container(
+              decoration: BoxDecoration(
+                color: state.isActive
+                    ? AppColors.categoryButtonSelected.withOpacity(0.5)
+                    : (state.isHover
+                        ? AppColors.categoryButton.withOpacity(0.3)
+                        : AppColors.categoryButton.withOpacity(0.1)),
                 borderRadius: BorderRadius.circular(20.0),
-                onTap: onTap,
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 150),
-                  transform: state.isHover
-                      ? (Matrix4.identity()..scale(1.05))
-                      : Matrix4.identity(),
-                  padding: const EdgeInsets.all(4.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Icon(
-                        widget.sound.icon,
-                        color: state.isActive ? Colors.white : Colors.white60,
-                        size: 25,
-                      ),
-                      buildSlider(),
-                    ],
+                border: Border.all(
+                    color: state.isActive
+                        ? Colors.white.withOpacity(0.3)
+                        : Colors.white.withOpacity(0.1),
+                    width: state.isActive ? 1.0 : 0.5),
+              ),
+              constraints: const BoxConstraints(
+                minWidth: 100,
+                minHeight: 100,
+                maxWidth: 200,
+                maxHeight: 200,
+              ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(20.0),
+                  onTap: onTap,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 150),
+                    transform: state.isHover
+                        ? (Matrix4.identity()..scale(1.05))
+                        : Matrix4.identity(),
+                    padding: const EdgeInsets.all(4.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Icon(
+                          widget.sound.icon,
+                          color: state.isActive ? Colors.white : Colors.white60,
+                          size: 25,
+                        ),
+                        buildSlider(),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          );
-        }),
+            );
+          }),
+        ),
       ),
     );
   }
@@ -165,8 +141,8 @@ class _AudioButtonWidgetState extends State<AudioButtonWidget>
                   trackConfig: TrackConfig(
                     activeColor: Colors.white.withOpacity(0.8),
                     inactiveColor: Colors.grey.shade300.withOpacity(0.6),
-                    height: 6,
-                    radius: 6,
+                    height: 4,
+                    radius: 4,
                   ),
                   thumbConfig: const ThumbConfig(
                     color: Colors.white,
@@ -179,19 +155,7 @@ class _AudioButtonWidgetState extends State<AudioButtonWidget>
                   ),
                 ),
                 onChanged: (double value) {
-                  if (_cubit != null) {
-                    _cubit!.onChangeVolume(value);
-                  }
-                },
-                onChangeStart: (double value) {
-                  if (_cubit != null) {
-                    _cubit!.onChangeVolume(value);
-                  }
-                },
-                onChangeEnd: (double value) {
-                  if (_cubit != null) {
-                    _cubit!.onChangeVolume(value);
-                  }
+                  _cubit.onChangeVolume(value);
                 },
               ),
             ),
@@ -202,14 +166,10 @@ class _AudioButtonWidgetState extends State<AudioButtonWidget>
   }
 
   void onHoverChanged(bool value) {
-    if (mounted && _cubit != null) {
-      _cubit!.onHoverChange(value);
+    if (mounted) {
+      _cubit.onHoverChange(value);
     }
   }
 
-  void onTap() {
-    if (_cubit != null) {
-      _cubit!.toggleSound();
-    }
-  }
+  void onTap() => _cubit.toggleSound();
 }

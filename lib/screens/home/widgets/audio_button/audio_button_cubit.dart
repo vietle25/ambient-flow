@@ -1,22 +1,22 @@
 import 'package:ambientflow/models/sound_model.dart';
-import 'package:ambientflow/screens/home/cubit/home_cubit.dart';
 import 'package:ambientflow/services/audio/audio_service.dart';
+import 'package:ambientflow/services/di/service_locator.dart';
 import 'package:ambientflow/state/app_state.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+
+import '../../../../cubits/bookmark/bookmark_cubit.dart';
 
 part 'audio_button_state.dart';
 
 class AudioButtonCubit extends Cubit<AudioButtonState> {
   final AudioService audioService;
   final AppState appState;
-  final HomeCubit? homeCubit; // Optional reference to HomeCubit for mute state
   late final SoundModel _sound;
 
   AudioButtonCubit({
     required this.audioService,
     required this.appState,
-    this.homeCubit,
   }) : super(const AudioButtonState());
 
   /// Initialize with a sound model
@@ -55,6 +55,13 @@ class AudioButtonCubit extends Cubit<AudioButtonState> {
       await Future<void>.delayed(const Duration(milliseconds: 500));
       _stopSound();
     }
+
+    // Notify bookmark cubit that app state has changed
+    try {
+      getIt<BookmarkCubit>().notifyAppStateChanged();
+    } catch (e) {
+      // Ignore errors if bookmark cubit is not available
+    }
   }
 
   Future<void> _playSound() async {
@@ -64,20 +71,7 @@ class AudioButtonCubit extends Cubit<AudioButtonState> {
     }
 
     audioService.playSound(_sound.id);
-
-    // Check if the app is muted via HomeCubit
-    final bool isMuted = homeCubit?.isMuted ?? false;
-
-    // Use the global app volume if available, otherwise use the local volume
-    // If app is muted, set volume to 0
-    double effectiveVolume;
-    if (isMuted) {
-      effectiveVolume = 0;
-    } else {
-      effectiveVolume = appState.appVolume > 0 ? appState.appVolume : state.volume;
-    }
-
-    audioService.setVolume(_sound.id, effectiveVolume / 100);
+    audioService.setVolume(_sound.id, state.volume / 100);
   }
 
   /// Stop the sound
@@ -88,22 +82,7 @@ class AudioButtonCubit extends Cubit<AudioButtonState> {
   /// Change the volume
   Future<void> onChangeVolume(double volume) async {
     emit(state.copyWith(volume: volume));
-
-    // Check if the app is muted via HomeCubit
-    final bool isMuted = homeCubit?.isMuted ?? false;
-
-    // If muted, set volume to 0
-    if (isMuted) {
-      audioService.setVolume(_sound.id, 0);
-      return;
-    }
-
-    // Apply the individual sound volume, but respect the global app volume
-    // If global volume is lower, use that as a multiplier
-    final double globalVolumeMultiplier = appState.appVolume / 100;
-    final double effectiveVolume = volume * globalVolumeMultiplier;
-
-    audioService.setVolume(_sound.id, effectiveVolume / 100);
+    audioService.setVolume(_sound.id, volume / 100);
   }
 
   @override
@@ -117,5 +96,14 @@ class AudioButtonCubit extends Cubit<AudioButtonState> {
 
   void onHoverChange(bool val) {
     emit(state.copyWith(isHover: val));
+  }
+
+  /// Syncs the button state with the global app state.
+  /// This should be called when bookmarks are applied or when the global state changes.
+  void syncWithAppState() {
+    final bool isActive = appState.isSoundActive(_sound.id);
+    if (state.isActive != isActive) {
+      emit(state.copyWith(isActive: isActive));
+    }
   }
 }

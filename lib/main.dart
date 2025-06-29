@@ -6,7 +6,6 @@ import 'firebase_options.dart';
 import 'navigation/app_router.dart';
 import 'services/di/service_locator.dart';
 import 'utils/scroll_behavior.dart';
-import 'widgets/cookie_consent_overlay.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,10 +40,6 @@ class MyApp extends StatelessWidget {
       scrollBehavior: AppScrollBehavior(),
       routeInformationParser: _appRouter.defaultRouteParser(),
       routerDelegate: _appRouter.delegate(),
-      // Add the cookie consent overlay as a builder
-      builder: (BuildContext context, Widget? child) {
-        return CookieConsentOverlay(child: child ?? const SizedBox.shrink());
-      },
     );
   }
 }
