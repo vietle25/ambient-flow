@@ -1,9 +1,8 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants/app_colors.dart';
-import '../navigation/route_constants.dart';
+import '../screens/cookie_policy/cookie_policy_page.dart';
 
 /// A banner that displays cookie consent information and allows users to accept or decline.
 class CookieConsentBanner extends StatefulWidget {
@@ -13,8 +12,11 @@ class CookieConsentBanner extends StatefulWidget {
   State<CookieConsentBanner> createState() => _CookieConsentBannerState();
 }
 
-class _CookieConsentBannerState extends State<CookieConsentBanner> with SingleTickerProviderStateMixin {
+class _CookieConsentBannerState extends State<CookieConsentBanner>
+    with SingleTickerProviderStateMixin {
   static const String _prefsKey = 'cookie_consent_given';
+  static const String _analyticsPrefsKey = 'analytics_cookies_consent';
+  static const String _functionalPrefsKey = 'functional_cookies_consent';
   bool _showBanner = false;
   late AnimationController _animationController;
   late Animation<Offset> _offsetAnimation;
@@ -41,6 +43,9 @@ class _CookieConsentBannerState extends State<CookieConsentBanner> with SingleTi
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final bool consentGiven = prefs.getBool(_prefsKey) ?? false;
 
+    // Debug: Print consent status
+    print('Cookie consent status: $consentGiven');
+
     if (!consentGiven) {
       setState(() {
         _showBanner = true;
@@ -53,14 +58,38 @@ class _CookieConsentBannerState extends State<CookieConsentBanner> with SingleTi
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_prefsKey, true);
 
+    if (accepted) {
+      // Accept all cookies
+      await prefs.setBool(_analyticsPrefsKey, true);
+      await prefs.setBool(_functionalPrefsKey, true);
+    } else {
+      // Decline non-essential cookies
+      await prefs.setBool(_analyticsPrefsKey, false);
+      await prefs.setBool(_functionalPrefsKey, false);
+    }
+
+    // Debug: Verify the value was saved
+    final bool saved = prefs.getBool(_prefsKey) ?? false;
+    print('Cookie consent saved: $saved');
+
     // Here you would typically implement analytics or tracking based on consent
     // For example: if (accepted) { initializeAnalytics(); }
 
     _animationController.reverse().then((_) {
-      setState(() {
-        _showBanner = false;
-      });
+      if (mounted) {
+        setState(() {
+          _showBanner = false;
+        });
+      }
     });
+  }
+
+  void _openCookiePolicy() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) => const CookiePolicyPage(),
+      ),
+    );
   }
 
   @override
@@ -84,7 +113,7 @@ class _CookieConsentBannerState extends State<CookieConsentBanner> with SingleTi
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           decoration: BoxDecoration(
             color: AppColors.primaryBackground.withOpacity(0.95),
-            boxShadow: [
+            boxShadow: <BoxShadow>[
               BoxShadow(
                 color: Colors.black.withOpacity(0.2),
                 blurRadius: 8,
@@ -93,12 +122,10 @@ class _CookieConsentBannerState extends State<CookieConsentBanner> with SingleTi
             ],
           ),
           child: LayoutBuilder(
-            builder: (context, constraints) {
+            builder: (BuildContext context, BoxConstraints constraints) {
               final bool isNarrow = constraints.maxWidth < 600;
 
-              return isNarrow
-                  ? _buildMobileLayout()
-                  : _buildDesktopLayout();
+              return isNarrow ? _buildMobileLayout() : _buildDesktopLayout();
             },
           ),
         ),
@@ -108,20 +135,21 @@ class _CookieConsentBannerState extends State<CookieConsentBanner> with SingleTi
 
   Widget _buildDesktopLayout() {
     return Row(
-      children: [
+      children: <Widget>[
         Expanded(
           flex: 3,
           child: RichText(
             text: TextSpan(
               style: const TextStyle(color: Colors.white, fontSize: 14),
-              children: [
+              children: <InlineSpan>[
                 const TextSpan(
-                  text: 'This website uses cookies to enhance your browsing experience. '
-                  'By continuing to use our site, you consent to our use of cookies in accordance with our ',
+                  text:
+                      'This website uses cookies to enhance your browsing experience. '
+                      'By continuing to use our site, you consent to our use of cookies in accordance with our ',
                 ),
                 WidgetSpan(
                   child: GestureDetector(
-                    onTap: () => context.router.navigateNamed(RouteConstants.cookiePolicy),
+                    onTap: _openCookiePolicy,
                     child: const Text(
                       'Cookie Policy',
                       style: TextStyle(
@@ -148,18 +176,19 @@ class _CookieConsentBannerState extends State<CookieConsentBanner> with SingleTi
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      children: <Widget>[
         RichText(
           text: TextSpan(
             style: const TextStyle(color: Colors.white, fontSize: 14),
-            children: [
+            children: <InlineSpan>[
               const TextSpan(
-                text: 'This website uses cookies to enhance your browsing experience. '
-                'By continuing to use our site, you consent to our use of cookies in accordance with our ',
+                text:
+                    'This website uses cookies to enhance your browsing experience. '
+                    'By continuing to use our site, you consent to our use of cookies in accordance with our ',
               ),
               WidgetSpan(
                 child: GestureDetector(
-                  onTap: () => context.router.navigateNamed(RouteConstants.cookiePolicy),
+                  onTap: _openCookiePolicy,
                   child: const Text(
                     'Cookie Policy',
                     style: TextStyle(
@@ -178,7 +207,7 @@ class _CookieConsentBannerState extends State<CookieConsentBanner> with SingleTi
         const SizedBox(height: 16),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
-          children: [
+          children: <Widget>[
             _buildButtons(),
           ],
         ),
@@ -189,7 +218,7 @@ class _CookieConsentBannerState extends State<CookieConsentBanner> with SingleTi
   Widget _buildButtons() {
     return Row(
       mainAxisSize: MainAxisSize.min,
-      children: [
+      children: <Widget>[
         TextButton(
           onPressed: () => _setConsentStatus(false),
           style: TextButton.styleFrom(

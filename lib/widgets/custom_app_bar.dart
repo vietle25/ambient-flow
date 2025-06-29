@@ -9,6 +9,7 @@ import '../navigation/route_constants.dart';
 import '../screens/home/cubit/home_cubit.dart';
 import '../screens/home/cubit/home_state.dart';
 import 'auth/login_button.dart';
+import 'bookmark/bookmark_button.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   const CustomAppBar({super.key});
@@ -30,10 +31,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               previous.isMuted != current.isMuted,
           builder: (BuildContext context, HomeState state) {
             return Row(
-              children: [
+              children: <Widget>[
+                // Bookmark controls
+                const SaveBookmarkButton(),
+                const SizedBox(width: 16),
+
                 // Volume slider - always visible
                 SizedBox(
-                  width: 160,
+                  width: 120,
                   child: SliderBar(
                     config: SliderConfig(
                       min: 0,
@@ -63,23 +68,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                         context.read<HomeCubit>().toggleMute();
                       }
                     },
-                    onChangeStart: (double value) {
-                      context.read<HomeCubit>().setAppVolume(value);
-                      // If volume is adjusted and was muted, unmute it
-                      if (state.isMuted && value > 0) {
-                        context.read<HomeCubit>().toggleMute();
-                      }
-                    },
-                    onChangeEnd: (double value) {
-                      context.read<HomeCubit>().setAppVolume(value);
-                      // If volume is adjusted and was muted, unmute it
-                      if (state.isMuted && value > 0) {
-                        context.read<HomeCubit>().toggleMute();
-                      }
-                    },
                   ),
                 ),
-                const SizedBox(width: 12),
                 // Volume icon - toggles mute/unmute
                 IconButton(
                   icon: Icon(
