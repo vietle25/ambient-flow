@@ -1,3 +1,4 @@
+import 'package:ambientflow/services/audio/audio_coordinator_service.dart';
 import 'package:ambientflow/services/di/service_locator.dart';
 import 'package:ambientflow/state/app_state.dart';
 import 'package:auto_route/auto_route.dart';
@@ -26,6 +27,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final HomeCubit homeCubit = HomeCubit(
     appState: getIt<AppState>(),
+    audioCoordinator: getIt<AudioCoordinatorService>(),
   );
   final BackgroundCubit backgroundCubit = BackgroundCubit();
   final BookmarkCubit bookmarkCubit = getIt<BookmarkCubit>();

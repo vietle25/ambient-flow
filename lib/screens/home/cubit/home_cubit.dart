@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:ambientflow/services/audio/audio_coordinator_service.dart';
 import 'package:ambientflow/state/app_state.dart';
 import 'package:bloc/bloc.dart';
 
@@ -9,9 +10,11 @@ class HomeCubit extends Cubit<HomeState> {
   Timer? _timer;
 
   final AppState appState;
+  final AudioCoordinatorService audioCoordinator;
 
   HomeCubit({
     required this.appState,
+    required this.audioCoordinator,
   }) : super(const HomeState());
 
   // Toggle a sound on/off
@@ -123,13 +126,16 @@ class HomeCubit extends Cubit<HomeState> {
     return super.close();
   }
 
-  void setAppVolume(double volume) {
+  Future<void> setAppVolume(double volume) async {
     appState.appVolume = volume;
     emit(state.copyWith(volume: volume));
+
+    // Apply the volume change to all active sounds
+    await audioCoordinator.setGlobalVolume(volume);
   }
 
   // Toggle mute/unmute
-  void toggleMute() {
+  Future<void> toggleMute() async {
     final bool newMutedState = !state.isMuted;
 
     // Store the previous volume level if we're muting
@@ -140,12 +146,18 @@ class HomeCubit extends Cubit<HomeState> {
       }
       appState.appVolume = 0;
       emit(state.copyWith(isMuted: true, volume: 0));
+
+      // Apply mute to all active sounds
+      await audioCoordinator.setMuted(true);
     } else {
       // Restore previous volume or set to default if none stored
       final double restoredVolume =
           appState.previousVolume > 0 ? appState.previousVolume : 50;
       appState.appVolume = restoredVolume;
       emit(state.copyWith(isMuted: false, volume: restoredVolume));
+
+      // Apply unmute to all active sounds
+      await audioCoordinator.setMuted(false);
     }
   }
 

@@ -71,7 +71,8 @@ class AudioButtonCubit extends Cubit<AudioButtonState> {
     }
 
     audioService.playSound(_sound.id);
-    audioService.setVolume(_sound.id, state.volume / 100);
+    // Apply the global app volume when starting the sound
+    audioService.setVolume(_sound.id, appState.appVolume / 100);
   }
 
   /// Stop the sound

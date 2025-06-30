@@ -162,14 +162,14 @@ class AudioCoordinatorService {
   }
 
   /// Mutes or unmutes all sounds.
+  /// Note: This method only applies the mute/unmute state.
+  /// Volume restoration should be handled by the caller.
   Future<void> setMuted(bool muted) async {
     if (muted) {
       await setGlobalVolume(0);
     } else {
-      // Restore previous volume
-      final double restoredVolume =
-          _appState.previousVolume > 0 ? _appState.previousVolume : 50.0;
-      await setGlobalVolume(restoredVolume);
+      // Use the current app volume when unmuting
+      await setGlobalVolume(_appState.appVolume);
     }
   }
 }

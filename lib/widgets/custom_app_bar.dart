@@ -61,11 +61,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                         shadowColor: Colors.black26,
                       ),
                     ),
-                    onChanged: (double value) {
-                      context.read<HomeCubit>().setAppVolume(value);
+                    onChanged: (double value) async {
+                      final HomeCubit homeCubit = context.read<HomeCubit>();
+                      await homeCubit.setAppVolume(value);
                       // If volume is adjusted and was muted, unmute it
                       if (state.isMuted && value > 0) {
-                        context.read<HomeCubit>().toggleMute();
+                        await homeCubit.toggleMute();
                       }
                     },
                   ),
@@ -77,8 +78,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     color: Colors.white,
                   ),
                   tooltip: state.isMuted ? 'Unmute' : 'Mute',
-                  onPressed: () {
-                    context.read<HomeCubit>().toggleMute();
+                  onPressed: () async {
+                    await context.read<HomeCubit>().toggleMute();
                   },
                 ),
               ],
