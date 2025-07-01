@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:slider_bar/slider_bar.dart';
 
-import '../constants/app_strings.dart';
-import '../constants/app_styles.dart';
 import '../navigation/route_constants.dart';
 import '../screens/home/cubit/home_cubit.dart';
 import '../screens/home/cubit/home_state.dart';
@@ -21,7 +19,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: 0,
       title: GestureDetector(
         onTap: () => context.router.navigateNamed(RouteConstants.home),
-        child: const Text(AppStrings.appTitle, style: AppStyles.appBarTitle),
+        child: Image.asset(
+          'assets/images/logo.png',
+          height: 40,
+          fit: BoxFit.contain,
+        ),
       ),
       centerTitle: false,
       actions: <Widget>[
