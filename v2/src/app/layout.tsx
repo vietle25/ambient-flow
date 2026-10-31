@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: 'Ambient Flow - Perfect Ambient Soundscapes',
   description: 'Create your perfect ambient soundscape for focus, relaxation, and productivity.',
   icons: {
-    icon: '/images/favicon.png',
+    icon: '/v2/images/favicon.png',
   },
 };
 

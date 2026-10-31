@@ -27,7 +27,7 @@ export const CustomAppBar: React.FC = () => {
       {/* Logo */}
       <div className="flex items-center gap-3 cursor-pointer select-none">
         <Image
-          src="/images/logo.png"
+          src="/v2/images/logo.png"
           alt="Ambient Flow"
           width={160}
           height={40}

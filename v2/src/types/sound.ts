@@ -27,41 +27,43 @@ export interface BookmarkCollection {
   bookmarks: SoundBookmark[];
 }
 
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_PATH || '/v2';
+
 export const SOUNDS: SoundModel[] = [
   // Weather
   {
     id: 'light_rain',
     name: 'Light Rain',
     category: 'weather',
-    audioPath: '/sounds/light-rain.mp3',
+    audioPath: `${BASE_URL}/sounds/light-rain.mp3`,
     iconName: 'CloudDrizzle',
   },
   {
     id: 'heavy_rain',
     name: 'Heavy Rain',
     category: 'weather',
-    audioPath: '/sounds/rain.mp3',
+    audioPath: `${BASE_URL}/sounds/rain.mp3`,
     iconName: 'CloudRain',
   },
   {
     id: 'thunder',
     name: 'Thunder',
     category: 'weather',
-    audioPath: '/sounds/thunder.mp3',
+    audioPath: `${BASE_URL}/sounds/thunder.mp3`,
     iconName: 'CloudLightning',
   },
   {
     id: 'wind',
     name: 'Wind',
     category: 'weather',
-    audioPath: '/sounds/wind.mp3',
+    audioPath: `${BASE_URL}/sounds/wind.mp3`,
     iconName: 'Wind',
   },
   {
     id: 'forest',
     name: 'Forest',
     category: 'weather',
-    audioPath: '/sounds/forest.mp3',
+    audioPath: `${BASE_URL}/sounds/forest.mp3`,
     iconName: 'Trees',
   },
 
@@ -70,28 +72,28 @@ export const SOUNDS: SoundModel[] = [
     id: 'leaves',
     name: 'Leaves',
     category: 'nature',
-    audioPath: '/sounds/leaves.m4a',
+    audioPath: `${BASE_URL}/sounds/leaves.m4a`,
     iconName: 'Leaf',
   },
   {
     id: 'waves',
     name: 'Waves',
     category: 'nature',
-    audioPath: '/sounds/waves.mp3',
+    audioPath: `${BASE_URL}/sounds/waves.mp3`,
     iconName: 'Waves',
   },
   {
     id: 'stream',
     name: 'Stream',
     category: 'nature',
-    audioPath: '/sounds/flowing-water.mp3',
+    audioPath: `${BASE_URL}/sounds/flowing-water.mp3`,
     iconName: 'Droplets',
   },
   {
     id: 'water_drops',
     name: 'Water Drops',
     category: 'nature',
-    audioPath: '/sounds/water.mp3',
+    audioPath: `${BASE_URL}/sounds/water.mp3`,
     iconName: 'Droplet',
   },
 
@@ -100,28 +102,28 @@ export const SOUNDS: SoundModel[] = [
     id: 'fire',
     name: 'Fire',
     category: 'ambience',
-    audioPath: '/sounds/fire.mp3',
+    audioPath: `${BASE_URL}/sounds/fire.mp3`,
     iconName: 'Flame',
   },
   {
     id: 'night',
     name: 'Night',
     category: 'ambience',
-    audioPath: '/sounds/night-frog.mp3',
+    audioPath: `${BASE_URL}/sounds/night-frog.mp3`,
     iconName: 'Moon',
   },
   {
     id: 'cafe',
     name: 'Cafe',
     category: 'ambience',
-    audioPath: '/sounds/coffee-shop.mp3',
+    audioPath: `${BASE_URL}/sounds/coffee-shop.mp3`,
     iconName: 'Coffee',
   },
   {
     id: 'train',
     name: 'Train',
     category: 'ambience',
-    audioPath: '/sounds/train.mp3',
+    audioPath: `${BASE_URL}/sounds/train.mp3`,
     iconName: 'Train',
   },
 ];
