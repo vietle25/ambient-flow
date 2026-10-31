@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { Volume2, VolumeX, BookmarkPlus, User as UserIcon, LogOut } from 'lucide-react';
+import { Volume2, VolumeX, BookmarkPlus, User as UserIcon, LogOut, Wallpaper } from 'lucide-react';
 import { useAudioApp } from '@/context/AudioAppContext';
 import { AppLogo } from '@/components/AppLogo';
 
@@ -18,6 +18,7 @@ export const CustomAppBar: React.FC = () => {
     toggleMute,
     activeSounds,
     setOpenSaveModal,
+    setOpenBackgroundModal,
   } = useAudioApp();
 
   const [showProfileMenu, setShowProfileMenu] = React.useState(false);
@@ -30,6 +31,15 @@ export const CustomAppBar: React.FC = () => {
 
       {/* Actions */}
       <div className="flex items-center gap-4">
+        {/* Change Background Button */}
+        <button
+          onClick={() => setOpenBackgroundModal(true)}
+          title="Thay đổi hình nền / Video / Gradient"
+          className="p-2.5 rounded-full transition-all duration-200 flex items-center justify-center text-white/90 hover:bg-white/15 active:scale-95"
+        >
+          <Wallpaper className="w-5 h-5 text-indigo-300 hover:text-white transition-colors" />
+        </button>
+
         {/* Bookmark Save Button */}
         <button
           onClick={() => setOpenSaveModal(true)}

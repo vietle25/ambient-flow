@@ -6,6 +6,7 @@ import { CustomAppBar } from '@/components/CustomAppBar';
 import { AudioButton } from '@/components/AudioButton';
 import { VerticalBookmarkList } from '@/components/VerticalBookmarkList';
 import { SaveBookmarkModal } from '@/components/SaveBookmarkModal';
+import { BackgroundSelectorModal } from '@/components/BackgroundSelectorModal';
 import { AnimatedBackground } from '@/components/AnimatedBackground';
 import { CookieConsentBanner } from '@/components/CookieConsentBanner';
 import { SOUNDS } from '@/types/sound';
@@ -60,6 +61,9 @@ export default function HomePage() {
 
         {/* Save Bookmark Dialog */}
         <SaveBookmarkModal />
+
+        {/* Background Selector Modal */}
+        <BackgroundSelectorModal />
 
         {/* Cookie Consent */}
         <CookieConsentBanner />

@@ -4,6 +4,7 @@ import React, { createContext, useContext, useEffect, useState, useRef } from 'r
 import { User, onAuthStateChanged, signInWithPopup, signOut as fbSignOut } from 'firebase/auth';
 import { auth, googleProvider } from '@/lib/firebase';
 import { BookmarkCollection, SoundBookmark, SOUNDS } from '@/types/sound';
+import { BackgroundItem, BACKGROUND_PRESETS } from '@/types/background';
 import { audioManager } from '@/lib/audioManager';
 import { bookmarkStorage } from '@/lib/bookmarkStorage';
 
@@ -25,6 +26,12 @@ interface AudioAppContextType {
   toggleSound: (soundId: string) => void;
   setSoundVolume: (soundId: string, volume: number) => void;
   clearAllSounds: () => void;
+
+  // Background Customization
+  currentBackground: BackgroundItem;
+  setBackground: (bg: BackgroundItem) => void;
+  openBackgroundModal: boolean;
+  setOpenBackgroundModal: (val: boolean) => void;
 
   // Bookmarks
   bookmarks: SoundBookmark[];
@@ -48,6 +55,34 @@ export const AudioAppProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   // soundId -> volume (0..100)
   const [activeSounds, setActiveSounds] = useState<Record<string, number>>({});
+
+  // Background State
+  const [currentBackground, setCurrentBackground] = useState<BackgroundItem>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const savedId = localStorage.getItem('ambient_flow_bg_id');
+        if (savedId) {
+          const found = BACKGROUND_PRESETS.find((bg) => bg.id === savedId);
+          if (found) return found;
+        }
+      } catch (e) {
+        console.error('Error loading background from local storage', e);
+      }
+    }
+    return BACKGROUND_PRESETS[0]; // Mặc định là dynamic gradient
+  });
+  const [openBackgroundModal, setOpenBackgroundModal] = useState(false);
+
+  const setBackground = (bg: BackgroundItem) => {
+    setCurrentBackground(bg);
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('ambient_flow_bg_id', bg.id);
+      } catch (e) {
+        console.error('Error saving background to local storage', e);
+      }
+    }
+  };
 
   // Bookmarks - Load ngay lập tức từ LocalStorage để không bị trễ khi mount
   const [bookmarks, setBookmarks] = useState<SoundBookmark[]>(() => {
@@ -265,6 +300,10 @@ export const AudioAppProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         toggleSound,
         setSoundVolume,
         clearAllSounds,
+        currentBackground,
+        setBackground,
+        openBackgroundModal,
+        setOpenBackgroundModal,
         bookmarks,
         isSavingBookmark,
         openSaveModal,
