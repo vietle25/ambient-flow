@@ -4,7 +4,7 @@ import { BookmarkCollection, SoundBookmark } from '@/types/sound';
 
 const LOCAL_STORAGE_KEY = 'ambient_flow_local_bookmarks';
 const FIRESTORE_COLLECTION = 'user_bookmarks';
-const MAX_BOOKMARKS = 5;
+const MAX_BOOKMARKS = 10;
 
 export const bookmarkStorage = {
   getLocalBookmarks(): BookmarkCollection {
@@ -12,8 +12,13 @@ export const bookmarkStorage = {
     try {
       const data = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (!data) return { bookmarks: [] };
-      return JSON.parse(data);
-    } catch {
+      const parsed = JSON.parse(data);
+      if (Array.isArray(parsed?.bookmarks)) {
+        return parsed as BookmarkCollection;
+      }
+      return { bookmarks: [] };
+    } catch (e) {
+      console.warn('Error reading local bookmarks:', e);
       return { bookmarks: [] };
     }
   },
@@ -23,21 +28,24 @@ export const bookmarkStorage = {
     try {
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(collection));
     } catch (e) {
-      console.error('Error saving local bookmarks', e);
+      console.error('Error saving local bookmarks:', e);
     }
   },
 
-  async getFirestoreBookmarks(userId: string): Promise<BookmarkCollection> {
+  async getFirestoreBookmarks(userId: string): Promise<BookmarkCollection | null> {
     try {
       const ref = doc(db, FIRESTORE_COLLECTION, userId);
       const snap = await getDoc(ref);
       if (snap.exists()) {
-        return snap.data() as BookmarkCollection;
+        const data = snap.data();
+        if (Array.isArray(data?.bookmarks)) {
+          return data as BookmarkCollection;
+        }
       }
-      return { bookmarks: [] };
+      return null;
     } catch (e) {
-      console.error('Error loading Firestore bookmarks', e);
-      return { bookmarks: [] };
+      console.error('Error loading Firestore bookmarks:', e);
+      return null;
     }
   },
 
@@ -46,13 +54,18 @@ export const bookmarkStorage = {
       const ref = doc(db, FIRESTORE_COLLECTION, userId);
       await setDoc(ref, collection, { merge: true });
     } catch (e) {
-      console.error('Error saving Firestore bookmarks', e);
+      console.error('Error saving Firestore bookmarks:', e);
     }
   },
 
   async loadBookmarks(userId?: string | null): Promise<BookmarkCollection> {
     if (userId) {
-      return await this.getFirestoreBookmarks(userId);
+      const cloud = await this.getFirestoreBookmarks(userId);
+      if (cloud && cloud.bookmarks.length > 0) {
+        // Luôn đồng bộ vào local cache để backup
+        this.saveLocalBookmarks(cloud);
+        return cloud;
+      }
     }
     return this.getLocalBookmarks();
   },
@@ -68,10 +81,14 @@ export const bookmarkStorage = {
 
     const collection: BookmarkCollection = { bookmarks: updated };
 
-    if (userId) {
-      await this.saveFirestoreBookmarks(userId, collection);
-    }
+    // LUÔN lưu vào LocalStorage trước tiên để đảm bảo dữ liệu không bao giờ bị mất
     this.saveLocalBookmarks(collection);
+
+    if (userId) {
+      this.saveFirestoreBookmarks(userId, collection).catch((err) => {
+        console.warn('Could not sync to cloud in background:', err);
+      });
+    }
 
     return collection;
   },
@@ -81,10 +98,13 @@ export const bookmarkStorage = {
     const updated = current.bookmarks.filter((b) => b.id !== bookmarkId);
     const collection: BookmarkCollection = { bookmarks: updated };
 
-    if (userId) {
-      await this.saveFirestoreBookmarks(userId, collection);
-    }
     this.saveLocalBookmarks(collection);
+
+    if (userId) {
+      this.saveFirestoreBookmarks(userId, collection).catch((err) => {
+        console.warn('Could not sync delete to cloud:', err);
+      });
+    }
 
     return collection;
   },
@@ -98,28 +118,35 @@ export const bookmarkStorage = {
     }));
     const collection: BookmarkCollection = { bookmarks: updated };
 
-    if (userId) {
-      await this.saveFirestoreBookmarks(userId, collection);
-    }
     this.saveLocalBookmarks(collection);
+
+    if (userId) {
+      this.saveFirestoreBookmarks(userId, collection).catch((err) => {
+        console.warn('Could not sync last used to cloud:', err);
+      });
+    }
 
     return collection;
   },
 
   async migrateLocalToCloud(userId: string): Promise<BookmarkCollection> {
     const local = this.getLocalBookmarks();
-    if (local.bookmarks.length === 0) {
-      return await this.getFirestoreBookmarks(userId);
+    const cloud = await this.getFirestoreBookmarks(userId);
+
+    if (!cloud || cloud.bookmarks.length === 0) {
+      if (local.bookmarks.length > 0) {
+        await this.saveFirestoreBookmarks(userId, local);
+      }
+      return local;
     }
 
-    const cloud = await this.getFirestoreBookmarks(userId);
-    const existingNames = new Set(cloud.bookmarks.map((b) => b.name.toLowerCase()));
+    const existingIds = new Set(cloud.bookmarks.map((b) => b.id));
     const merged = [...cloud.bookmarks];
 
     for (const b of local.bookmarks) {
-      if (!existingNames.has(b.name.toLowerCase())) {
+      if (!existingIds.has(b.id)) {
         merged.push(b);
-        existingNames.add(b.name.toLowerCase());
+        existingIds.add(b.id);
       }
     }
 
@@ -127,6 +154,7 @@ export const bookmarkStorage = {
       bookmarks: merged.slice(0, MAX_BOOKMARKS),
     };
 
+    this.saveLocalBookmarks(finalCollection);
     await this.saveFirestoreBookmarks(userId, finalCollection);
     return finalCollection;
   },
