@@ -4,6 +4,7 @@ import React from 'react';
 import Image from 'next/image';
 import { Volume2, VolumeX, BookmarkPlus, User as UserIcon, LogOut } from 'lucide-react';
 import { useAudioApp } from '@/context/AudioAppContext';
+import { AppLogo } from '@/components/AppLogo';
 
 export const CustomAppBar: React.FC = () => {
   const {
@@ -24,17 +25,8 @@ export const CustomAppBar: React.FC = () => {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40 h-16 px-6 flex items-center justify-between backdrop-blur-md bg-white/5 border-b border-white/10">
-      {/* Logo */}
-      <div className="flex items-center gap-3 cursor-pointer select-none">
-        <Image
-          src="/v2/images/logo.png"
-          alt="Ambient Flow"
-          width={160}
-          height={40}
-          className="h-9 w-auto object-contain"
-          priority
-        />
-      </div>
+      {/* Brand Logo - Concept 2 (Flowing Infinity) */}
+      <AppLogo size="md" />
 
       {/* Actions */}
       <div className="flex items-center gap-4">
