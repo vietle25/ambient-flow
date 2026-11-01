@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Ambient Flow - Perfect Ambient Soundscapes',
-  description: 'Create your perfect ambient soundscape for focus, relaxation, and productivity.',
+  title: 'Floum - Focus & Calm Soundscapes',
+  description: 'Create your perfect ambient soundscape for focus, sleep, and relaxation.',
   icons: {
     icon: '/v2/favicon.svg',
   },

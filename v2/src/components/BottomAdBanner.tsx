@@ -34,7 +34,7 @@ export const BottomAdBanner: React.FC = () => {
               </p>
             </div>
             <p className="text-[11px] text-white/50 line-clamp-1">
-              Thưởng thức phiên làm việc không bị gián đoạn cùng Ambient Flow Pro
+              Thưởng thức phiên làm việc không bị gián đoạn cùng Floum Pro
             </p>
           </div>
         </div>

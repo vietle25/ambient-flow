@@ -30,7 +30,7 @@ function AppContent() {
         setProStatus(true);
         // Xóa query param trên thanh URL cho sạch sẽ
         window.history.replaceState({}, document.title, window.location.pathname);
-        alert('🎉 Chúc mừng bạn đã nâng cấp thành công gói Ambient Flow Pro! Toàn bộ quảng cáo đã được tắt vĩnh viễn.');
+        alert('🎉 Chúc mừng bạn đã nâng cấp thành công gói Floum Pro! Toàn bộ quảng cáo đã được tắt vĩnh viễn.');
       }
     }
   }, [setProStatus]);

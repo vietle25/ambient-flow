@@ -85,7 +85,7 @@ export const UpgradeProModal: React.FC = () => {
               Gói Trọn Đời (Lifetime)
             </span>
             <h2 className="text-2xl font-bold text-white tracking-tight">
-              Ambient Flow Pro
+              Floum Pro
             </h2>
           </div>
         </div>
