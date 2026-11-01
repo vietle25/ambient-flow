@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { Volume2, VolumeX, BookmarkPlus, User as UserIcon, LogOut, Wallpaper } from 'lucide-react';
+import { Volume2, VolumeX, BookmarkPlus, User as UserIcon, LogOut, Wallpaper, Sparkles } from 'lucide-react';
 import { useAudioApp } from '@/context/AudioAppContext';
 import { AppLogo } from '@/components/AppLogo';
 
@@ -19,6 +19,8 @@ export const CustomAppBar: React.FC = () => {
     activeSounds,
     setOpenSaveModal,
     setOpenBackgroundModal,
+    isPro,
+    setOpenProModal,
   } = useAudioApp();
 
   const [showProfileMenu, setShowProfileMenu] = React.useState(false);
@@ -30,7 +32,24 @@ export const CustomAppBar: React.FC = () => {
       <AppLogo size="md" />
 
       {/* Actions */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3 sm:gap-4">
+        {/* Pro Badge or Upgrade Button */}
+        {isPro ? (
+          <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30 text-amber-300">
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+            PRO
+          </span>
+        ) : (
+          <button
+            onClick={() => setOpenProModal(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 shadow-md shadow-amber-500/20 transition-all hover:scale-105 active:scale-95"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Nâng cấp Pro</span>
+            <span className="sm:hidden">Pro</span>
+          </button>
+        )}
+
         {/* Change Background Button */}
         <button
           onClick={() => setOpenBackgroundModal(true)}

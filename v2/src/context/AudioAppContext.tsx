@@ -33,6 +33,12 @@ interface AudioAppContextType {
   openBackgroundModal: boolean;
   setOpenBackgroundModal: (val: boolean) => void;
 
+  // Pro Membership & Remove Ads
+  isPro: boolean;
+  openProModal: boolean;
+  setOpenProModal: (val: boolean) => void;
+  setProStatus: (status: boolean) => void;
+
   // Bookmarks
   bookmarks: SoundBookmark[];
   isSavingBookmark: boolean;
@@ -80,6 +86,30 @@ export const AudioAppProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         localStorage.setItem('ambient_flow_bg_id', bg.id);
       } catch (e) {
         console.error('Error saving background to local storage', e);
+      }
+    }
+  };
+
+  // Pro Membership State
+  const [isPro, setIsProState] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        return localStorage.getItem('ambient_flow_is_pro') === 'true';
+      } catch (e) {
+        return false;
+      }
+    }
+    return false;
+  });
+  const [openProModal, setOpenProModal] = useState(false);
+
+  const setProStatus = (status: boolean) => {
+    setIsProState(status);
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('ambient_flow_is_pro', status ? 'true' : 'false');
+      } catch (e) {
+        console.error('Error saving pro status', e);
       }
     }
   };
@@ -304,6 +334,10 @@ export const AudioAppProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         setBackground,
         openBackgroundModal,
         setOpenBackgroundModal,
+        isPro,
+        openProModal,
+        setOpenProModal,
+        setProStatus,
         bookmarks,
         isSavingBookmark,
         openSaveModal,
