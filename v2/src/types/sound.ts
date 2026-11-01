@@ -27,7 +27,7 @@ export interface BookmarkCollection {
   bookmarks: SoundBookmark[];
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_PATH || '/v2';
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
 export const SOUNDS: SoundModel[] = [
   // Weather

@@ -29,7 +29,7 @@ export const UpgradeProModal: React.FC = () => {
       const amount = 49000; // 49.000 VNĐ
       const description = `PRO ${orderCode}`.slice(0, 25);
 
-      const baseUrl = window.location.origin + (window.location.pathname.startsWith('/v2') ? '/v2' : '');
+      const baseUrl = window.location.origin;
       const returnUrl = `${baseUrl}?payment=success&orderCode=${orderCode}`;
       const cancelUrl = `${baseUrl}?payment=cancel`;
 

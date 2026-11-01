@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: 'Floum - Focus & Calm Soundscapes',
   description: 'Create your perfect ambient soundscape for focus, sleep, and relaxation.',
   icons: {
-    icon: '/v2/favicon.svg',
+    icon: '/favicon.svg',
   },
 };
 

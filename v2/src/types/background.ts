@@ -28,7 +28,7 @@ export const BACKGROUND_PRESETS: BackgroundItem[] = [
     name: 'Mưa đêm bên cửa sổ',
     type: 'video',
     category: 'rain',
-    value: '/v2/videos/rain-window.mp4',
+    value: '/videos/rain-window.mp4',
     thumbnail: 'https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?w=300&q=80&auto=format&fit=crop',
     description: 'Từng giọt mưa đọng trên ô kính đêm êm đềm'
   },
@@ -37,7 +37,7 @@ export const BACKGROUND_PRESETS: BackgroundItem[] = [
     name: 'Lò sưởi ấm cúng',
     type: 'video',
     category: 'cozy',
-    value: '/v2/videos/fireplace.mp4',
+    value: '/videos/fireplace.mp4',
     thumbnail: 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?w=300&q=80&auto=format&fit=crop',
     description: 'Ánh lửa bập bùng xua tan mọi mệt mỏi'
   },
@@ -46,7 +46,7 @@ export const BACKGROUND_PRESETS: BackgroundItem[] = [
     name: 'Sóng biển hoàng hôn',
     type: 'video',
     category: 'nature',
-    value: '/v2/videos/ocean-waves.mp4',
+    value: '/videos/ocean-waves.mp4',
     thumbnail: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=300&q=80&auto=format&fit=crop',
     description: 'Sóng vỗ bờ cát nhẹ nhàng lúc hoàng hôn'
   },
