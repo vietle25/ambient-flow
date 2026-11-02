@@ -1,0 +1,7 @@
+{
+  "name": "ambient-flow-root",
+  "private": true,
+  "dependencies": {
+    "@payos/node": "^2.0.4"
+  }
+}
