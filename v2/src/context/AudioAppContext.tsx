@@ -30,6 +30,9 @@ interface AudioAppContextType {
   // Background Customization
   currentBackground: BackgroundItem;
   setBackground: (bg: BackgroundItem) => void;
+  customBackgrounds: BackgroundItem[];
+  addCustomBackground: (file: File) => Promise<BackgroundItem>;
+  removeCustomBackground: (id: string) => void;
   openBackgroundModal: boolean;
   setOpenBackgroundModal: (val: boolean) => void;
 
@@ -87,6 +90,69 @@ export const AudioAppProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       } catch (e) {
         console.error('Error saving background to local storage', e);
       }
+    }
+  };
+
+  // Custom Uploaded Backgrounds
+  const [customBackgrounds, setCustomBackgrounds] = useState<BackgroundItem[]>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('ambient_flow_custom_bgs');
+        if (saved) return JSON.parse(saved);
+      } catch (e) {
+        console.error('Error loading custom backgrounds', e);
+      }
+    }
+    return [];
+  });
+
+  const addCustomBackground = async (file: File): Promise<BackgroundItem> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64 = reader.result as string;
+        const newBg: BackgroundItem = {
+          id: `custom-bg-${Date.now()}`,
+          name: file.name.replace(/\.[^/.]+$/, '').slice(0, 20) || 'Ảnh tải lên',
+          type: 'image',
+          category: 'custom',
+          value: base64,
+          thumbnail: base64,
+          description: 'Ảnh tùy chỉnh của bạn',
+          isCustom: true,
+          isProOnly: true,
+        };
+
+        setCustomBackgrounds((prev) => {
+          const updated = [newBg, ...prev];
+          try {
+            localStorage.setItem('ambient_flow_custom_bgs', JSON.stringify(updated));
+          } catch (e) {
+            console.warn('LocalStorage quota exceeded for custom backgrounds', e);
+          }
+          return updated;
+        });
+
+        resolve(newBg);
+      };
+      reader.onerror = (error) => reject(error);
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const removeCustomBackground = (id: string) => {
+    setCustomBackgrounds((prev) => {
+      const updated = prev.filter((bg) => bg.id !== id);
+      try {
+        localStorage.setItem('ambient_flow_custom_bgs', JSON.stringify(updated));
+      } catch (e) {
+        console.error(e);
+      }
+      return updated;
+    });
+    // Nếu đang dùng background này, chuyển về default
+    if (currentBackground.id === id) {
+      setBackground(BACKGROUND_PRESETS[0]);
     }
   };
 
@@ -332,6 +398,9 @@ export const AudioAppProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         clearAllSounds,
         currentBackground,
         setBackground,
+        customBackgrounds,
+        addCustomBackground,
+        removeCustomBackground,
         openBackgroundModal,
         setOpenBackgroundModal,
         isPro,

@@ -36,8 +36,13 @@ export const AnimatedBackground: React.FC = () => {
   const [nextIdx, setNextIdx] = useState(1);
   const [transitioning, setTransitioning] = useState(false);
 
+  const isDynamicGradient =
+    currentBackground.type === 'gradient' && currentBackground.value === 'dynamic';
+  const isStaticGradient =
+    currentBackground.type === 'gradient' && currentBackground.value !== 'dynamic';
+
   useEffect(() => {
-    if (currentBackground.type !== 'gradient') return;
+    if (!isDynamicGradient) return;
 
     // Chuyển màu êm ả mỗi 18 giây với hiệu ứng 6 giây mượt mà
     const interval = setInterval(() => {
@@ -52,12 +57,12 @@ export const AnimatedBackground: React.FC = () => {
     }, 18000);
 
     return () => clearInterval(interval);
-  }, [currentBackground.type]);
+  }, [isDynamicGradient]);
 
   return (
     <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none select-none bg-slate-950">
-      {/* 1. Gradient Mode */}
-      {currentBackground.type === 'gradient' && (
+      {/* 1. Dynamic Cycling Gradient Mode */}
+      {isDynamicGradient && (
         <>
           <div
             className="absolute inset-0"
@@ -75,10 +80,20 @@ export const AnimatedBackground: React.FC = () => {
         </>
       )}
 
-      {/* 2. Image Mode */}
+      {/* 2. Static Custom Gradient Mode */}
+      {isStaticGradient && (
+        <div
+          className="absolute inset-0 transition-all duration-1000 ease-out"
+          style={{
+            background: currentBackground.value,
+          }}
+        />
+      )}
+
+      {/* 3. Image Mode (Presets or User Uploads) */}
       {currentBackground.type === 'image' && (
         <div
-          key={currentBackground.value}
+          key={currentBackground.id}
           className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-1000 ease-out transform scale-105"
           style={{
             backgroundImage: `url('${currentBackground.value}')`,
@@ -86,7 +101,7 @@ export const AnimatedBackground: React.FC = () => {
         />
       )}
 
-      {/* 3. Video Mode */}
+      {/* 4. Video Mode */}
       {currentBackground.type === 'video' && (
         <video
           key={currentBackground.value}

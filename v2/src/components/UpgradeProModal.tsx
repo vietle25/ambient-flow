@@ -114,6 +114,18 @@ export const UpgradeProModal: React.FC = () => {
               <div className="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
                 <Check className="w-3 h-3 stroke-[3]" />
               </div>
+              <span>Mở khóa toàn bộ <strong>Video background &amp; Hình ảnh chất lượng cao</strong></span>
+            </li>
+            <li className="flex items-center gap-2.5">
+              <div className="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                <Check className="w-3 h-3 stroke-[3]" />
+              </div>
+              <span><strong>Tự do tải ảnh nền cá nhân (Upload ảnh của riêng bạn)</strong></span>
+            </li>
+            <li className="flex items-center gap-2.5">
+              <div className="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                <Check className="w-3 h-3 stroke-[3]" />
+              </div>
               <span><strong>Tắt hoàn toàn quảng cáo</strong> (Không banner, không phân tâm)</span>
             </li>
             <li className="flex items-center gap-2.5">
@@ -121,12 +133,6 @@ export const UpgradeProModal: React.FC = () => {
                 <Check className="w-3 h-3 stroke-[3]" />
               </div>
               <span><strong>Không giới hạn lưu Presets</strong> và cấu hình âm thanh</span>
-            </li>
-            <li className="flex items-center gap-2.5">
-              <div className="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
-                <Check className="w-3 h-3 stroke-[3]" />
-              </div>
-              <span>Mở khóa toàn bộ <strong>Video background & hình ảnh chất lượng cao</strong></span>
             </li>
             <li className="flex items-center gap-2.5">
               <div className="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
