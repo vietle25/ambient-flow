@@ -1,4 +1,4 @@
 {
-  "buildCommand": "bash build_and_deploy.sh",
-  "outputDirectory": "build/web"
+  "buildCommand": "cd v2 && npm install && npm run build",
+  "outputDirectory": "v2/.next"
 }

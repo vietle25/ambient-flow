@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { Sparkles, Check, X, ShieldCheck, QrCode, ArrowRight, Loader2 } from 'lucide-react';
 import { useAudioApp } from '@/context/AudioAppContext';
-import { createPayOSPaymentLink, PAYOS_CONFIG } from '@/lib/payosClient';
 
 export const UpgradeProModal: React.FC = () => {
   const { openProModal, setOpenProModal, isPro, user } = useAudioApp();
@@ -17,33 +16,24 @@ export const UpgradeProModal: React.FC = () => {
     setErrorMsg(null);
 
     try {
-      // 1. Kiểm tra cấu hình key
-      if (!PAYOS_CONFIG.clientId || !PAYOS_CONFIG.apiKey || !PAYOS_CONFIG.checksumKey) {
-        throw new Error(
-          'Chưa điền thông tin PayOS trong file v2/.env.local (hoặc Vercel Environment Variables).'
-        );
-      }
-
-      // 2. Tạo mã đơn hàng duy nhất
-      const orderCode = Number(String(Date.now()).slice(-7) + Math.floor(Math.random() * 90 + 10));
-      const amount = 49000; // 49.000 VNĐ
-      const description = `PRO ${orderCode}`.slice(0, 25);
-
-      const baseUrl = window.location.origin;
-      const returnUrl = `${baseUrl}?payment=success&orderCode=${orderCode}`;
-      const cancelUrl = `${baseUrl}?payment=cancel`;
-
-      // 3. Gọi hàm tạo link thanh toán PayOS
-      const paymentData = await createPayOSPaymentLink({
-        orderCode,
-        amount,
-        description,
-        returnUrl,
-        cancelUrl,
+      const response = await fetch('/api/payos/create-payment-link', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: user?.email || undefined,
+        }),
       });
 
-      if (paymentData?.checkoutUrl) {
-        window.location.href = paymentData.checkoutUrl;
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || 'Có lỗi xảy ra khi tạo giao dịch thanh toán.');
+      }
+
+      if (data?.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
       } else {
         throw new Error('Không nhận được checkoutUrl từ PayOS');
       }
