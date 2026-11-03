@@ -1,16 +1,12 @@
 const { PayOS } = require('@payos/node');
 
-const clientId = process.env.PAYOS_CLIENT_ID || '';
-const apiKey = process.env.PAYOS_API_KEY || '';
-const checksumKey = process.env.PAYOS_CHECKSUM_KEY || '';
-
-let payosInstance = null;
 function getPayOS() {
+  const clientId = process.env.PAYOS_CLIENT_ID || '';
+  const apiKey = process.env.PAYOS_API_KEY || '';
+  const checksumKey = process.env.PAYOS_CHECKSUM_KEY || '';
+
   if (!clientId || !apiKey || !checksumKey) return null;
-  if (!payosInstance) {
-    payosInstance = new PayOS({ clientId, apiKey, checksumKey });
-  }
-  return payosInstance;
+  return new PayOS({ clientId, apiKey, checksumKey });
 }
 
 module.exports = async function handler(req, res) {
