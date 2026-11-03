@@ -2,7 +2,8 @@
 
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { User, onAuthStateChanged, signInWithPopup, signOut as fbSignOut } from 'firebase/auth';
-import { auth, googleProvider } from '@/lib/firebase';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { auth, googleProvider, db } from '@/lib/firebase';
 import { BookmarkCollection, SoundBookmark, SOUNDS } from '@/types/sound';
 import { BackgroundItem, BACKGROUND_PRESETS } from '@/types/background';
 import { audioManager } from '@/lib/audioManager';
@@ -169,13 +170,23 @@ export const AudioAppProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   });
   const [openProModal, setOpenProModal] = useState(false);
 
-  const setProStatus = (status: boolean) => {
+  const setProStatus = async (status: boolean) => {
     setIsProState(status);
     if (typeof window !== 'undefined') {
       try {
         localStorage.setItem('ambient_flow_is_pro', status ? 'true' : 'false');
       } catch (e) {
         console.error('Error saving pro status', e);
+      }
+    }
+
+    // Nếu đã đăng nhập, lưu đồng bộ vĩnh viễn vào Firestore
+    if (userRef.current?.uid) {
+      try {
+        const userDocRef = doc(db, 'users', userRef.current.uid);
+        await setDoc(userDocRef, { isPro: status, updatedAt: new Date().toISOString() }, { merge: true });
+      } catch (e) {
+        console.error('Error syncing pro status to Firestore:', e);
       }
     }
   };
@@ -204,6 +215,26 @@ export const AudioAppProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       setAuthLoading(false);
 
       if (currentUser) {
+        // Kiểm tra quyền Pro trên Firestore
+        try {
+          const userDocRef = doc(db, 'users', currentUser.uid);
+          const snap = await getDoc(userDocRef);
+          if (snap.exists() && snap.data()?.isPro) {
+            setIsProState(true);
+            if (typeof window !== 'undefined') {
+              localStorage.setItem('ambient_flow_is_pro', 'true');
+            }
+          } else {
+            // Nếu local có Pro (vừa thanh toán xong), đồng bộ lên Firestore
+            const localIsPro = typeof window !== 'undefined' && localStorage.getItem('ambient_flow_is_pro') === 'true';
+            if (localIsPro) {
+              await setDoc(userDocRef, { isPro: true, updatedAt: new Date().toISOString() }, { merge: true });
+            }
+          }
+        } catch (err) {
+          console.warn('Could not fetch user pro status from Firestore:', err);
+        }
+
         try {
           const cloudBookmarks = await bookmarkStorage.migrateLocalToCloud(currentUser.uid);
           setBookmarks(cloudBookmarks.bookmarks);

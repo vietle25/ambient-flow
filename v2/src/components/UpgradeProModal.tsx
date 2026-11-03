@@ -5,13 +5,23 @@ import { Sparkles, Check, X, ShieldCheck, QrCode, ArrowRight, Loader2 } from 'lu
 import { useAudioApp } from '@/context/AudioAppContext';
 
 export const UpgradeProModal: React.FC = () => {
-  const { openProModal, setOpenProModal, isPro, user } = useAudioApp();
+  const { openProModal, setOpenProModal, isPro, user, signInGoogle } = useAudioApp();
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   if (!openProModal) return null;
 
   const handlePayOSPayment = async () => {
+    // 1. Bắt buộc đăng nhập Google trước khi thanh toán
+    if (!user) {
+      try {
+        await signInGoogle();
+      } catch (err: any) {
+        setErrorMsg('Vui lòng đăng nhập Google để lưu gói Pro vào tài khoản của bạn.');
+      }
+      return;
+    }
+
     setLoading(true);
     setErrorMsg(null);
 
@@ -22,7 +32,8 @@ export const UpgradeProModal: React.FC = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          email: user?.email || undefined,
+          userId: user.uid,
+          email: user.email || undefined,
         }),
       });
 
@@ -157,10 +168,16 @@ export const UpgradeProModal: React.FC = () => {
                 <ShieldCheck className="w-4 h-4 text-emerald-800" />
                 <span>Bạn đã sở hữu gói Pro</span>
               </>
+            ) : !user ? (
+              <>
+                <Sparkles className="w-4 h-4" />
+                <span>Đăng nhập Google để nâng cấp Pro</span>
+                <ArrowRight className="w-4 h-4 ml-1" />
+              </>
             ) : (
               <>
                 <QrCode className="w-4 h-4" />
-                <span>Thanh toán 49.000đ qua VietQR / Ngân hàng</span>
+                <span>Thanh toán 49.000đ ({user.email})</span>
                 <ArrowRight className="w-4 h-4 ml-1" />
               </>
             )}
@@ -168,7 +185,7 @@ export const UpgradeProModal: React.FC = () => {
 
           <p className="text-center text-[11px] text-white/50 flex items-center justify-center gap-1.5">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-            Cổng thanh toán tự động VietQR xử lý bảo mật bởi PayOS
+            {user ? 'Gói Pro sẽ được liên kết vĩnh viễn với tài khoản của bạn' : 'Cần đăng nhập để dùng Pro trên mọi thiết bị máy tính, điện thoại'}
           </p>
         </div>
       </div>
