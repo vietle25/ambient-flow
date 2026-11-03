@@ -3,7 +3,7 @@ set -e
 
 echo "=== Building Floum Next.js Web App ==="
 cd v2
-npm install
+npm install --legacy-peer-deps
 npm run build
 cd ..
 
