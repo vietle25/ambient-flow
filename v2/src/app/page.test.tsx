@@ -55,8 +55,8 @@ describe('HomePage URL Payment Callback - Kích hoạt Pro qua URL', () => {
       expect(localStorage.getItem('ambient_flow_is_pro')).toBe('true');
       // 2. Phải dọn query param trên thanh URL
       expect(replaceStateSpy).toHaveBeenCalled();
-      // 3. Phải hiển thị alert chúc mừng
-      expect(window.alert).toHaveBeenCalledWith(expect.stringContaining('Chúc mừng bạn đã nâng cấp thành công'));
+      // 3. Phải hiển thị alert cảm ơn
+      expect(window.alert).toHaveBeenCalledWith(expect.stringContaining('Cảm ơn bạn rất nhiều vì đã ủng hộ Floum'));
     });
 
     window.location = originalLocation;

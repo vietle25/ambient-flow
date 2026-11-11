@@ -9,10 +9,9 @@ vi.mock('@/context/AudioAppContext', () => ({
   useAudioApp: vi.fn(),
 }));
 
-describe('BackgroundSelectorModal - Comprehensive Test Suite', () => {
+describe('BackgroundSelectorModal - 100% Free All Presets Test Suite', () => {
   const mockSetOpenBackgroundModal = vi.fn();
   const mockSetBackground = vi.fn();
-  const mockSetOpenProModal = vi.fn();
   const mockAddCustomBackground = vi.fn();
   const mockRemoveCustomBackground = vi.fn();
 
@@ -21,7 +20,7 @@ describe('BackgroundSelectorModal - Comprehensive Test Suite', () => {
     vi.spyOn(window, 'alert').mockImplementation(() => {});
   });
 
-  it('cho phép user Free chọn gradient miễn phí mà không bị chặn', () => {
+  it('cho phép mọi người dùng chọn gradient miễn phí', () => {
     (useAudioApp as any).mockReturnValue({
       openBackgroundModal: true,
       setOpenBackgroundModal: mockSetOpenBackgroundModal,
@@ -30,8 +29,6 @@ describe('BackgroundSelectorModal - Comprehensive Test Suite', () => {
       customBackgrounds: [],
       addCustomBackground: mockAddCustomBackground,
       removeCustomBackground: mockRemoveCustomBackground,
-      isPro: false,
-      setOpenProModal: mockSetOpenProModal,
     });
 
     render(<BackgroundSelectorModal />);
@@ -40,10 +37,9 @@ describe('BackgroundSelectorModal - Comprehensive Test Suite', () => {
 
     fireEvent.click(freeGradient);
     expect(mockSetBackground).toHaveBeenCalled();
-    expect(mockSetOpenProModal).not.toHaveBeenCalled();
   });
 
-  it('chặn user Free khi bấm vào video hoặc ảnh Pro và kích hoạt popup mua Pro', () => {
+  it('cho phép mọi người dùng chọn video lặp mà không bị chặn', () => {
     (useAudioApp as any).mockReturnValue({
       openBackgroundModal: true,
       setOpenBackgroundModal: mockSetOpenBackgroundModal,
@@ -52,62 +48,19 @@ describe('BackgroundSelectorModal - Comprehensive Test Suite', () => {
       customBackgrounds: [],
       addCustomBackground: mockAddCustomBackground,
       removeCustomBackground: mockRemoveCustomBackground,
-      isPro: false,
-      setOpenProModal: mockSetOpenProModal,
     });
 
     render(<BackgroundSelectorModal />);
-    const proVideo = screen.getByText(/Mưa đêm bên cửa sổ/i);
-    expect(proVideo).toBeDefined();
+    const videoItem = screen.getByText(/Mưa đêm bên cửa sổ/i);
+    expect(videoItem).toBeDefined();
 
-    fireEvent.click(proVideo);
-    expect(mockSetBackground).not.toHaveBeenCalled();
-    expect(mockSetOpenProModal).toHaveBeenCalledTimes(1);
-  });
-
-  it('chặn nút tự upload ảnh nếu user chưa có Pro', () => {
-    (useAudioApp as any).mockReturnValue({
-      openBackgroundModal: true,
-      setOpenBackgroundModal: mockSetOpenBackgroundModal,
-      currentBackground: BACKGROUND_PRESETS[0],
-      setBackground: mockSetBackground,
-      customBackgrounds: [],
-      addCustomBackground: mockAddCustomBackground,
-      removeCustomBackground: mockRemoveCustomBackground,
-      isPro: false,
-      setOpenProModal: mockSetOpenProModal,
-    });
-
-    render(<BackgroundSelectorModal />);
-    const uploadBtn = screen.getByRole('button', { name: /Tự upload ảnh/i });
-    fireEvent.click(uploadBtn);
-    expect(mockSetOpenProModal).toHaveBeenCalledTimes(1);
-  });
-
-  it('cho phép user Pro chọn bất kỳ video hoặc ảnh nền nào', () => {
-    (useAudioApp as any).mockReturnValue({
-      openBackgroundModal: true,
-      setOpenBackgroundModal: mockSetOpenBackgroundModal,
-      currentBackground: BACKGROUND_PRESETS[0],
-      setBackground: mockSetBackground,
-      customBackgrounds: [],
-      addCustomBackground: mockAddCustomBackground,
-      removeCustomBackground: mockRemoveCustomBackground,
-      isPro: true,
-      setOpenProModal: mockSetOpenProModal,
-    });
-
-    render(<BackgroundSelectorModal />);
-    const proVideo = screen.getByText(/Mưa đêm bên cửa sổ/i);
-    fireEvent.click(proVideo);
-
+    fireEvent.click(videoItem);
     expect(mockSetBackground).toHaveBeenCalledWith(
       expect.objectContaining({ id: 'video-rain-window' })
     );
-    expect(mockSetOpenProModal).not.toHaveBeenCalled();
   });
 
-  it('chặn upload nếu file không phải là ảnh (e.g. file text/pdf)', async () => {
+  it('cho phép mọi người dùng chọn ảnh chill mà không bị chặn', () => {
     (useAudioApp as any).mockReturnValue({
       openBackgroundModal: true,
       setOpenBackgroundModal: mockSetOpenBackgroundModal,
@@ -116,21 +69,42 @@ describe('BackgroundSelectorModal - Comprehensive Test Suite', () => {
       customBackgrounds: [],
       addCustomBackground: mockAddCustomBackground,
       removeCustomBackground: mockRemoveCustomBackground,
-      isPro: true,
-      setOpenProModal: mockSetOpenProModal,
+    });
+
+    render(<BackgroundSelectorModal />);
+    const photoItem = screen.getByText(/Bầu trời đầy sao/i);
+    expect(photoItem).toBeDefined();
+
+    fireEvent.click(photoItem);
+    expect(mockSetBackground).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 'photo-starry-night' })
+    );
+  });
+
+  it('chặn tải lên nếu file không phải là ảnh (Validation type)', async () => {
+    (useAudioApp as any).mockReturnValue({
+      openBackgroundModal: true,
+      setOpenBackgroundModal: mockSetOpenBackgroundModal,
+      currentBackground: BACKGROUND_PRESETS[0],
+      setBackground: mockSetBackground,
+      customBackgrounds: [],
+      addCustomBackground: mockAddCustomBackground,
+      removeCustomBackground: mockRemoveCustomBackground,
     });
 
     const { container } = render(<BackgroundSelectorModal />);
     const fileInput = container.querySelector('input[type="file"]') as HTMLInputElement;
 
-    const fakePdfFile = new File(['dummy content'], 'document.pdf', { type: 'application/pdf' });
-    fireEvent.change(fileInput, { target: { files: [fakePdfFile] } });
+    const dummyTextFile = new File(['content'], 'document.pdf', { type: 'application/pdf' });
+    fireEvent.change(fileInput, { target: { files: [dummyTextFile] } });
 
-    expect(window.alert).toHaveBeenCalledWith(expect.stringContaining('Vui lòng chọn file hình ảnh'));
+    expect(window.alert).toHaveBeenCalledWith(
+      expect.stringContaining('Vui lòng chọn file hình ảnh')
+    );
     expect(mockAddCustomBackground).not.toHaveBeenCalled();
   });
 
-  it('chặn upload nếu dung lượng file vượt quá 5MB', async () => {
+  it('chặn tải lên nếu kích thước file > 5MB (Validation size)', async () => {
     (useAudioApp as any).mockReturnValue({
       openBackgroundModal: true,
       setOpenBackgroundModal: mockSetOpenBackgroundModal,
@@ -139,31 +113,35 @@ describe('BackgroundSelectorModal - Comprehensive Test Suite', () => {
       customBackgrounds: [],
       addCustomBackground: mockAddCustomBackground,
       removeCustomBackground: mockRemoveCustomBackground,
-      isPro: true,
-      setOpenProModal: mockSetOpenProModal,
     });
 
     const { container } = render(<BackgroundSelectorModal />);
     const fileInput = container.querySelector('input[type="file"]') as HTMLInputElement;
 
-    // Tạo file 6MB
-    const bigFile = new File([new ArrayBuffer(6 * 1024 * 1024)], 'huge.png', { type: 'image/png' });
+    const bigFile = new File(['x'.repeat(6 * 1024 * 1024)], 'huge-image.jpg', {
+      type: 'image/jpeg',
+    });
+    Object.defineProperty(bigFile, 'size', { value: 6 * 1024 * 1024 });
+
     fireEvent.change(fileInput, { target: { files: [bigFile] } });
 
-    expect(window.alert).toHaveBeenCalledWith(expect.stringContaining('Kích thước ảnh tối đa 5MB'));
+    expect(window.alert).toHaveBeenCalledWith(
+      expect.stringContaining('Kích thước ảnh tối đa 5MB')
+    );
     expect(mockAddCustomBackground).not.toHaveBeenCalled();
   });
 
-  it('upload ảnh thành công khi file hợp lệ và là user Pro', async () => {
-    const mockCreatedBg = {
-      id: 'custom-bg-123',
-      name: 'My Room',
+  it('cho phép tải lên thành công file ảnh hợp lệ và tự động áp dụng làm nền', async () => {
+    const fakeCustomBg = {
+      id: 'custom-123',
+      name: 'My Custom View',
       type: 'image',
-      value: 'data:image/png;base64,xxxx',
-      thumbnail: 'data:image/png;base64,xxxx',
+      category: 'custom',
+      value: 'data:image/png;base64,123',
+      thumbnail: 'data:image/png;base64,123',
       isCustom: true,
     };
-    mockAddCustomBackground.mockResolvedValue(mockCreatedBg);
+    mockAddCustomBackground.mockResolvedValue(fakeCustomBg);
 
     (useAudioApp as any).mockReturnValue({
       openBackgroundModal: true,
@@ -173,32 +151,31 @@ describe('BackgroundSelectorModal - Comprehensive Test Suite', () => {
       customBackgrounds: [],
       addCustomBackground: mockAddCustomBackground,
       removeCustomBackground: mockRemoveCustomBackground,
-      isPro: true,
-      setOpenProModal: mockSetOpenProModal,
     });
 
     const { container } = render(<BackgroundSelectorModal />);
     const fileInput = container.querySelector('input[type="file"]') as HTMLInputElement;
 
-    const validImg = new File(['valid img content'], 'myroom.png', { type: 'image/png' });
-    fireEvent.change(fileInput, { target: { files: [validImg] } });
+    const validFile = new File(['valid'], 'avatar.jpg', { type: 'image/jpeg' });
+    Object.defineProperty(validFile, 'size', { value: 1024 * 500 }); // 500KB
+
+    fireEvent.change(fileInput, { target: { files: [validFile] } });
 
     await waitFor(() => {
-      expect(mockAddCustomBackground).toHaveBeenCalledWith(validImg);
-      expect(mockSetBackground).toHaveBeenCalledWith(mockCreatedBg);
+      expect(mockAddCustomBackground).toHaveBeenCalledWith(validFile);
+      expect(mockSetBackground).toHaveBeenCalledWith(fakeCustomBg);
     });
   });
 
-  it('cho phép xóa ảnh custom và gọi removeCustomBackground với stopPropagation', () => {
-    const customBg = {
-      id: 'custom-bg-1',
-      name: 'Custom Photo 1',
-      type: 'image' as const,
-      category: 'custom' as const,
-      value: 'data:image/png;base64,sample',
-      thumbnail: 'data:image/png;base64,sample',
+  it('xóa ảnh custom thành công và ngăn chặn nổi bọt sự kiện chọn background (stopPropagation)', () => {
+    const fakeCustomBg = {
+      id: 'custom-999',
+      name: 'Custom Sunset',
+      type: 'image',
+      category: 'custom',
+      value: 'data:image/jpeg;base64,...',
+      thumbnail: 'data:image/jpeg;base64,...',
       isCustom: true,
-      isProOnly: true,
     };
 
     (useAudioApp as any).mockReturnValue({
@@ -206,11 +183,9 @@ describe('BackgroundSelectorModal - Comprehensive Test Suite', () => {
       setOpenBackgroundModal: mockSetOpenBackgroundModal,
       currentBackground: BACKGROUND_PRESETS[0],
       setBackground: mockSetBackground,
-      customBackgrounds: [customBg],
+      customBackgrounds: [fakeCustomBg],
       addCustomBackground: mockAddCustomBackground,
       removeCustomBackground: mockRemoveCustomBackground,
-      isPro: true,
-      setOpenProModal: mockSetOpenProModal,
     });
 
     render(<BackgroundSelectorModal />);
@@ -218,12 +193,11 @@ describe('BackgroundSelectorModal - Comprehensive Test Suite', () => {
     expect(deleteBtn).toBeDefined();
 
     fireEvent.click(deleteBtn);
-    expect(mockRemoveCustomBackground).toHaveBeenCalledWith('custom-bg-1');
-    // Vì stopPropagation được gọi nên thẻ cha không kích hoạt setBackground
+    expect(mockRemoveCustomBackground).toHaveBeenCalledWith('custom-999');
     expect(mockSetBackground).not.toHaveBeenCalled();
   });
 
-  it('lọc danh sách hình nền chính xác khi chuyển tab', () => {
+  it('lọc danh sách hiển thị khi chuyển tab', () => {
     (useAudioApp as any).mockReturnValue({
       openBackgroundModal: true,
       setOpenBackgroundModal: mockSetOpenBackgroundModal,
@@ -232,19 +206,14 @@ describe('BackgroundSelectorModal - Comprehensive Test Suite', () => {
       customBackgrounds: [],
       addCustomBackground: mockAddCustomBackground,
       removeCustomBackground: mockRemoveCustomBackground,
-      isPro: true,
-      setOpenProModal: mockSetOpenProModal,
     });
 
     render(<BackgroundSelectorModal />);
-
-    // Chuyển sang tab Video lặp
     const videoTab = screen.getByRole('button', { name: /Video lặp/i });
     fireEvent.click(videoTab);
 
     expect(screen.getByText(/Mưa đêm bên cửa sổ/i)).toBeDefined();
-    // Các preset ảnh tĩnh như 'Rừng thông mờ sương' không được xuất hiện
-    expect(screen.queryByText(/Rừng thông mờ sương/i)).toBeNull();
+    expect(screen.queryByText(/Chuyển đổi mượt mà giữa các dải màu/i)).toBeNull();
   });
 
   it('đóng modal khi bấm nút Đóng ở footer', () => {
@@ -256,12 +225,10 @@ describe('BackgroundSelectorModal - Comprehensive Test Suite', () => {
       customBackgrounds: [],
       addCustomBackground: mockAddCustomBackground,
       removeCustomBackground: mockRemoveCustomBackground,
-      isPro: false,
-      setOpenProModal: mockSetOpenProModal,
     });
 
     render(<BackgroundSelectorModal />);
-    const closeBtn = screen.getByRole('button', { name: /^Đóng$/i });
+    const closeBtn = screen.getByRole('button', { name: 'Đóng' });
     fireEvent.click(closeBtn);
     expect(mockSetOpenBackgroundModal).toHaveBeenCalledWith(false);
   });

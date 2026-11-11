@@ -9,11 +9,11 @@ export interface BackgroundItem {
   thumbnail: string; // preview image URL
   description?: string;
   isCustom?: boolean; // Tự upload bởi người dùng
-  isProOnly?: boolean; // Yêu cầu gói Pro
+  isProOnly?: boolean; // Không bắt buộc, mở miễn phí 100%
 }
 
 export const BACKGROUND_PRESETS: BackgroundItem[] = [
-  // 1. FREE: Gradients
+  // 1. Gradients
   {
     id: 'gradient-ambient-flow',
     name: 'Dynamic Ambient Glow',
@@ -65,7 +65,7 @@ export const BACKGROUND_PRESETS: BackgroundItem[] = [
     isProOnly: false,
   },
 
-  // 2. PRO: Looping Chill Videos
+  // 2. Looping Chill Videos (Mở miễn phí 100%)
   {
     id: 'video-rain-window',
     name: 'Mưa đêm bên cửa sổ',
@@ -74,7 +74,7 @@ export const BACKGROUND_PRESETS: BackgroundItem[] = [
     value: '/videos/rain-window.mp4',
     thumbnail: 'https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?w=300&q=80&auto=format&fit=crop',
     description: 'Từng giọt mưa đọng trên ô kính đêm êm đềm',
-    isProOnly: true,
+    isProOnly: false,
   },
   {
     id: 'video-fireplace',
@@ -84,7 +84,7 @@ export const BACKGROUND_PRESETS: BackgroundItem[] = [
     value: '/videos/fireplace.mp4',
     thumbnail: 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?w=300&q=80&auto=format&fit=crop',
     description: 'Ánh lửa bập bùng xua tan mọi mệt mỏi',
-    isProOnly: true,
+    isProOnly: false,
   },
   {
     id: 'video-ocean-waves',
@@ -94,10 +94,10 @@ export const BACKGROUND_PRESETS: BackgroundItem[] = [
     value: '/videos/ocean-waves.mp4',
     thumbnail: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=300&q=80&auto=format&fit=crop',
     description: 'Sóng vỗ bờ cát nhẹ nhàng lúc hoàng hôn',
-    isProOnly: true,
+    isProOnly: false,
   },
 
-  // 3. PRO: Relaxing Photos
+  // 3. Relaxing Photos (Mở miễn phí 100%)
   {
     id: 'photo-night-rain',
     name: 'Đêm mưa thành phố',
@@ -106,7 +106,7 @@ export const BACKGROUND_PRESETS: BackgroundItem[] = [
     value: 'https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?q=85&w=1920&auto=format&fit=crop',
     thumbnail: 'https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?w=300&q=80&auto=format&fit=crop',
     description: 'Mưa rơi tí tách qua lăng kính ánh đèn đêm',
-    isProOnly: true,
+    isProOnly: false,
   },
   {
     id: 'photo-starry-night',
@@ -116,7 +116,7 @@ export const BACKGROUND_PRESETS: BackgroundItem[] = [
     value: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=85&w=1920&auto=format&fit=crop',
     thumbnail: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=300&q=80&auto=format&fit=crop',
     description: 'Dải ngân hà tĩnh lặng phía trên đỉnh núi tuyết',
-    isProOnly: true,
+    isProOnly: false,
   },
   {
     id: 'photo-misty-forest',
@@ -126,7 +126,7 @@ export const BACKGROUND_PRESETS: BackgroundItem[] = [
     value: 'https://images.unsplash.com/photo-1448375240586-882707db888b?q=85&w=1920&auto=format&fit=crop',
     thumbnail: 'https://images.unsplash.com/photo-1448375240586-882707db888b?w=300&q=80&auto=format&fit=crop',
     description: 'Không gian tĩnh mịch của rừng thông sớm mai',
-    isProOnly: true,
+    isProOnly: false,
   },
   {
     id: 'photo-cozy-cafe',
@@ -136,7 +136,7 @@ export const BACKGROUND_PRESETS: BackgroundItem[] = [
     value: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?q=85&w=1920&auto=format&fit=crop',
     thumbnail: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=300&q=80&auto=format&fit=crop',
     description: 'Hương cà phê ấm nồng giữa tiết trời se lạnh',
-    isProOnly: true,
+    isProOnly: false,
   },
   {
     id: 'photo-beach-sunset',
@@ -146,7 +146,7 @@ export const BACKGROUND_PRESETS: BackgroundItem[] = [
     value: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=85&w=1920&auto=format&fit=crop',
     thumbnail: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=300&q=80&auto=format&fit=crop',
     description: 'Ánh chiều tà êm dịu hòa cùng sóng vỗ',
-    isProOnly: true,
+    isProOnly: false,
   },
   {
     id: 'photo-tokyo-night',
@@ -156,7 +156,7 @@ export const BACKGROUND_PRESETS: BackgroundItem[] = [
     value: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?q=85&w=1920&auto=format&fit=crop',
     thumbnail: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?w=300&q=80&auto=format&fit=crop',
     description: 'Ánh đèn neon lung linh phản chiếu trên mặt phố ướt',
-    isProOnly: true,
+    isProOnly: false,
   },
   {
     id: 'photo-campfire',
@@ -166,6 +166,6 @@ export const BACKGROUND_PRESETS: BackgroundItem[] = [
     value: 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?q=85&w=1920&auto=format&fit=crop',
     thumbnail: 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?w=300&q=80&auto=format&fit=crop',
     description: 'Đốm lửa sưởi ấm tâm hồn trong đêm lạnh',
-    isProOnly: true,
+    isProOnly: false,
   }
 ];

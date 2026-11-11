@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { Volume2, VolumeX, BookmarkPlus, User as UserIcon, LogOut, Wallpaper, Sparkles } from 'lucide-react';
+import { Volume2, VolumeX, BookmarkPlus, User as UserIcon, LogOut, Wallpaper, Coffee, Heart } from 'lucide-react';
 import { useAudioApp } from '@/context/AudioAppContext';
 import { AppLogo } from '@/components/AppLogo';
 
@@ -19,7 +19,6 @@ export const CustomAppBar: React.FC = () => {
     activeSounds,
     setOpenSaveModal,
     setOpenBackgroundModal,
-    isPro,
     setOpenProModal,
   } = useAudioApp();
 
@@ -28,27 +27,21 @@ export const CustomAppBar: React.FC = () => {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40 h-16 px-6 flex items-center justify-between backdrop-blur-md bg-white/5 border-b border-white/10">
-      {/* Brand Logo - Concept 2 (Flowing Infinity) */}
+      {/* Brand Logo */}
       <AppLogo size="md" />
 
       {/* Actions */}
-      <div className="flex items-center gap-3 sm:gap-4">
-        {/* Pro Badge or Upgrade Button */}
-        {isPro ? (
-          <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30 text-amber-300">
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-            PRO
-          </span>
-        ) : (
-          <button
-            onClick={() => setOpenProModal(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 shadow-md shadow-amber-500/20 transition-all hover:scale-105 active:scale-95"
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Nâng cấp Pro</span>
-            <span className="sm:hidden">Pro</span>
-          </button>
-        )}
+      <div className="flex items-center gap-2.5 sm:gap-4">
+        {/* Buy Me a Coffee / Donate Button */}
+        <button
+          onClick={() => setOpenProModal(true)}
+          title="Mời tác giả tách cà phê / Buy me a coffee"
+          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 shadow-md shadow-amber-500/20 transition-all hover:scale-105 active:scale-95"
+        >
+          <Coffee className="w-3.5 h-3.5 fill-slate-950" />
+          <span className="hidden sm:inline">Buy me a coffee</span>
+          <span className="sm:hidden">Coffee</span>
+        </button>
 
         {/* Change Background Button */}
         <button
@@ -63,7 +56,7 @@ export const CustomAppBar: React.FC = () => {
         <button
           onClick={() => setOpenSaveModal(true)}
           disabled={!hasActiveSounds}
-          title={hasActiveSounds ? "Save current soundscape" : "Play at least one sound to bookmark"}
+          title={hasActiveSounds ? "Lưu bộ âm thanh hiện tại" : "Bật ít nhất 1 âm thanh để lưu"}
           className={`p-2.5 rounded-full transition-all duration-200 flex items-center justify-center ${
             hasActiveSounds
               ? 'text-white hover:bg-white/15 active:scale-95 text-white/90'
@@ -81,12 +74,12 @@ export const CustomAppBar: React.FC = () => {
             max={100}
             value={isMuted ? 0 : globalVolume}
             onChange={(e) => setGlobalVolume(Number(e.target.value))}
-            className="w-24 h-1.5 bg-white/30 rounded-lg appearance-none cursor-pointer accent-white"
+            className="w-20 sm:w-24 h-1.5 bg-white/30 rounded-lg appearance-none cursor-pointer accent-white"
           />
           <button
             onClick={toggleMute}
             className="text-white/80 hover:text-white transition-colors"
-            title={isMuted ? "Unmute" : "Mute"}
+            title={isMuted ? "Bật âm" : "Tắt âm"}
           >
             {isMuted || globalVolume === 0 ? (
               <VolumeX className="w-4 h-4 text-red-400" />
@@ -147,7 +140,7 @@ export const CustomAppBar: React.FC = () => {
               className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-medium transition-all duration-200 active:scale-95"
             >
               <UserIcon className="w-4 h-4" />
-              <span>Sign in</span>
+              <span className="hidden sm:inline">Sign in</span>
             </button>
           )}
         </div>

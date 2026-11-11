@@ -7,7 +7,7 @@ import { AudioButton } from '@/components/AudioButton';
 import { VerticalBookmarkList } from '@/components/VerticalBookmarkList';
 import { SaveBookmarkModal } from '@/components/SaveBookmarkModal';
 import { BackgroundSelectorModal } from '@/components/BackgroundSelectorModal';
-import { UpgradeProModal } from '@/components/UpgradeProModal';
+import { DonateModal } from '@/components/DonateModal';
 import { BottomAdBanner } from '@/components/BottomAdBanner';
 import { AnimatedBackground } from '@/components/AnimatedBackground';
 import { CookieConsentBanner } from '@/components/CookieConsentBanner';
@@ -19,18 +19,16 @@ function AppContent() {
   const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>('all');
   const { setProStatus } = useAudioApp();
 
-  // Kiểm tra callback sau khi PayOS thanh toán thành công chuyển hướng về: ?payment=success&orderCode=...
+  // Kiểm tra callback nếu có query param cũ ?payment=success&orderCode=...
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
       const paymentStatus = urlParams.get('payment');
-      const orderCode = urlParams.get('orderCode');
 
       if (paymentStatus === 'success') {
         setProStatus(true);
-        // Xóa query param trên thanh URL cho sạch sẽ
         window.history.replaceState({}, document.title, window.location.pathname);
-        alert('🎉 Chúc mừng bạn đã nâng cấp thành công gói Floum Pro! Toàn bộ quảng cáo đã được tắt vĩnh viễn.');
+        alert('🎉 Cảm ơn bạn rất nhiều vì đã ủng hộ Floum!');
       }
     }
   }, [setProStatus]);
@@ -66,40 +64,31 @@ function AppContent() {
           ))}
         </div>
 
-        {/* Sound Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6 w-full">
+        {/* Sound Buttons Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4 w-full">
           {filteredSounds.map((sound) => (
             <AudioButton key={sound.id} sound={sound} />
           ))}
         </div>
       </div>
 
-      {/* Vertical Bookmark Sidebar */}
+      {/* Vertical Bookmarks Floating Bar */}
       <VerticalBookmarkList />
 
-      {/* Save Bookmark Dialog */}
+      {/* Modals & Banners */}
       <SaveBookmarkModal />
-
-      {/* Background Selector Modal */}
       <BackgroundSelectorModal />
-
-      {/* Upgrade Pro Modal */}
-      <UpgradeProModal />
-
-      {/* Bottom Ad / Sponsor Banner */}
+      <DonateModal />
       <BottomAdBanner />
-
-      {/* Cookie Consent */}
       <CookieConsentBanner />
     </main>
   );
 }
 
-export default function HomePage() {
+export default function Home() {
   return (
     <AudioAppProvider>
       <AppContent />
     </AudioAppProvider>
   );
 }
-
