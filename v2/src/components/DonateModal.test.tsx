@@ -3,15 +3,22 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
 import { DonateModal } from './DonateModal';
 import { useAudioApp } from '@/context/AudioAppContext';
+import { LanguageProvider } from '@/context/LanguageContext';
 
 vi.mock('@/context/AudioAppContext', () => ({
   useAudioApp: vi.fn(),
 }));
 
+const renderWithLang = (ui: React.ReactElement) => {
+  return render(<LanguageProvider>{ui}</LanguageProvider>);
+};
+
 describe('DonateModal - Buy Me a Coffee Dual Language Suite with Both QRs', () => {
   const mockSetOpenProModal = vi.fn();
 
   beforeEach(() => {
+    localStorage.clear();
+    localStorage.setItem('floum_language', 'vi');
     vi.clearAllMocks();
   });
 
@@ -21,7 +28,7 @@ describe('DonateModal - Buy Me a Coffee Dual Language Suite with Both QRs', () =
       setOpenProModal: mockSetOpenProModal,
     });
 
-    const { container } = render(<DonateModal />);
+    const { container } = renderWithLang(<DonateModal />);
     expect(container.firstChild).toBeNull();
   });
 
@@ -31,8 +38,8 @@ describe('DonateModal - Buy Me a Coffee Dual Language Suite with Both QRs', () =
       setOpenProModal: mockSetOpenProModal,
     });
 
-    render(<DonateModal />);
-    const closeBtn = screen.getByLabelText('Đóng modal');
+    renderWithLang(<DonateModal />);
+    const closeBtn = screen.getByLabelText('Đóng');
     fireEvent.click(closeBtn);
     expect(mockSetOpenProModal).toHaveBeenCalledWith(false);
   });
@@ -43,10 +50,9 @@ describe('DonateModal - Buy Me a Coffee Dual Language Suite with Both QRs', () =
       setOpenProModal: mockSetOpenProModal,
     });
 
-    render(<DonateModal />);
-    // Tiêu đề song ngữ
+    renderWithLang(<DonateModal />);
+    // Tiêu đề
     expect(screen.getByText(/Ủng hộ tác giả/i)).toBeDefined();
-    expect(screen.getByText(/\/ Support Floum/i)).toBeDefined();
 
     // Thông tin ngân hàng ACB
     expect(screen.getByText(/ACB \(Ngân hàng TMCP Á Châu\)/i)).toBeDefined();
@@ -71,8 +77,8 @@ describe('DonateModal - Buy Me a Coffee Dual Language Suite with Both QRs', () =
       setOpenProModal: mockSetOpenProModal,
     });
 
-    render(<DonateModal />);
-    const copyStkBtn = screen.getByTitle('Sao chép số tài khoản');
+    renderWithLang(<DonateModal />);
+    const copyStkBtn = screen.getByTitle('Sao chép');
     fireEvent.click(copyStkBtn);
 
     expect(writeTextMock).toHaveBeenCalledWith('221754869');
@@ -87,7 +93,7 @@ describe('DonateModal - Buy Me a Coffee Dual Language Suite with Both QRs', () =
       setOpenProModal: mockSetOpenProModal,
     });
 
-    render(<DonateModal />);
+    renderWithLang(<DonateModal />);
     const paypalTabBtn = screen.getByRole('button', { name: /Quốc tế \(QR PayPal\)/i });
     fireEvent.click(paypalTabBtn);
 
@@ -108,7 +114,7 @@ describe('DonateModal - Buy Me a Coffee Dual Language Suite with Both QRs', () =
       setOpenProModal: mockSetOpenProModal,
     });
 
-    render(<DonateModal />);
+    renderWithLang(<DonateModal />);
     const dialogBackdrop = screen.getByRole('dialog');
     fireEvent.click(dialogBackdrop);
     expect(mockSetOpenProModal).toHaveBeenCalledWith(false);

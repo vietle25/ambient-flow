@@ -36,6 +36,7 @@ vi.mock('firebase/auth', () => ({
 describe('HomePage URL Payment Callback - Kích hoạt Pro qua URL', () => {
   beforeEach(() => {
     localStorage.clear();
+    localStorage.setItem('floum_language', 'vi');
     vi.clearAllMocks();
     vi.spyOn(window, 'alert').mockImplementation(() => {});
   });

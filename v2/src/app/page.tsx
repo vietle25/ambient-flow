@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { AudioAppProvider, useAudioApp } from '@/context/AudioAppContext';
+import { LanguageProvider, useLanguage } from '@/context/LanguageContext';
 import { CustomAppBar } from '@/components/CustomAppBar';
 import { AudioButton } from '@/components/AudioButton';
 import { VerticalBookmarkList } from '@/components/VerticalBookmarkList';
@@ -18,6 +19,7 @@ type CategoryFilter = 'all' | 'weather' | 'nature' | 'ambience';
 function AppContent() {
   const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>('all');
   const { setProStatus } = useAudioApp();
+  const { t } = useLanguage();
 
   // Kiểm tra callback nếu có query param cũ ?payment=success&orderCode=...
   useEffect(() => {
@@ -28,14 +30,21 @@ function AppContent() {
       if (paymentStatus === 'success') {
         setProStatus(true);
         window.history.replaceState({}, document.title, window.location.pathname);
-        alert('🎉 Cảm ơn bạn rất nhiều vì đã ủng hộ Floum!');
+        alert(t.alertThanks);
       }
     }
-  }, [setProStatus]);
+  }, [setProStatus, t.alertThanks]);
 
   const filteredSounds = selectedCategory === 'all'
     ? SOUNDS
     : SOUNDS.filter((s) => s.category === selectedCategory);
+
+  const categoryLabels: Record<CategoryFilter, string> = {
+    all: t.all,
+    weather: t.weather,
+    nature: t.nature,
+    ambience: t.ambience,
+  };
 
   return (
     <main className="relative min-h-screen flex flex-col justify-between overflow-x-hidden">
@@ -59,7 +68,7 @@ function AppContent() {
                   : 'text-white/70 hover:text-white hover:bg-white/10'
               }`}
             >
-              {cat}
+              {categoryLabels[cat]}
             </button>
           ))}
         </div>
@@ -87,8 +96,10 @@ function AppContent() {
 
 export default function Home() {
   return (
-    <AudioAppProvider>
-      <AppContent />
-    </AudioAppProvider>
+    <LanguageProvider>
+      <AudioAppProvider>
+        <AppContent />
+      </AudioAppProvider>
+    </LanguageProvider>
   );
 }

@@ -3,11 +3,16 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
 import { BackgroundSelectorModal } from './BackgroundSelectorModal';
 import { useAudioApp } from '@/context/AudioAppContext';
+import { LanguageProvider } from '@/context/LanguageContext';
 import { BACKGROUND_PRESETS } from '@/types/background';
 
 vi.mock('@/context/AudioAppContext', () => ({
   useAudioApp: vi.fn(),
 }));
+
+const renderWithLang = (ui: React.ReactElement) => {
+  return render(<LanguageProvider>{ui}</LanguageProvider>);
+};
 
 describe('BackgroundSelectorModal - 100% Free All Presets Test Suite', () => {
   const mockSetOpenBackgroundModal = vi.fn();
@@ -16,6 +21,8 @@ describe('BackgroundSelectorModal - 100% Free All Presets Test Suite', () => {
   const mockRemoveCustomBackground = vi.fn();
 
   beforeEach(() => {
+    localStorage.clear();
+    localStorage.setItem('floum_language', 'vi');
     vi.clearAllMocks();
     vi.spyOn(window, 'alert').mockImplementation(() => {});
   });
@@ -31,7 +38,7 @@ describe('BackgroundSelectorModal - 100% Free All Presets Test Suite', () => {
       removeCustomBackground: mockRemoveCustomBackground,
     });
 
-    render(<BackgroundSelectorModal />);
+    renderWithLang(<BackgroundSelectorModal />);
     const freeGradient = screen.getByText(/Midnight Deep Blue/i);
     expect(freeGradient).toBeDefined();
 
@@ -50,7 +57,7 @@ describe('BackgroundSelectorModal - 100% Free All Presets Test Suite', () => {
       removeCustomBackground: mockRemoveCustomBackground,
     });
 
-    render(<BackgroundSelectorModal />);
+    renderWithLang(<BackgroundSelectorModal />);
     const videoItem = screen.getByText(/Mưa đêm bên cửa sổ/i);
     expect(videoItem).toBeDefined();
 
@@ -71,7 +78,7 @@ describe('BackgroundSelectorModal - 100% Free All Presets Test Suite', () => {
       removeCustomBackground: mockRemoveCustomBackground,
     });
 
-    render(<BackgroundSelectorModal />);
+    renderWithLang(<BackgroundSelectorModal />);
     const photoItem = screen.getByText(/Bầu trời đầy sao/i);
     expect(photoItem).toBeDefined();
 
@@ -92,7 +99,7 @@ describe('BackgroundSelectorModal - 100% Free All Presets Test Suite', () => {
       removeCustomBackground: mockRemoveCustomBackground,
     });
 
-    const { container } = render(<BackgroundSelectorModal />);
+    const { container } = renderWithLang(<BackgroundSelectorModal />);
     const fileInput = container.querySelector('input[type="file"]') as HTMLInputElement;
 
     const dummyTextFile = new File(['content'], 'document.pdf', { type: 'application/pdf' });
@@ -115,7 +122,7 @@ describe('BackgroundSelectorModal - 100% Free All Presets Test Suite', () => {
       removeCustomBackground: mockRemoveCustomBackground,
     });
 
-    const { container } = render(<BackgroundSelectorModal />);
+    const { container } = renderWithLang(<BackgroundSelectorModal />);
     const fileInput = container.querySelector('input[type="file"]') as HTMLInputElement;
 
     const bigFile = new File(['x'.repeat(6 * 1024 * 1024)], 'huge-image.jpg', {
@@ -153,7 +160,7 @@ describe('BackgroundSelectorModal - 100% Free All Presets Test Suite', () => {
       removeCustomBackground: mockRemoveCustomBackground,
     });
 
-    const { container } = render(<BackgroundSelectorModal />);
+    const { container } = renderWithLang(<BackgroundSelectorModal />);
     const fileInput = container.querySelector('input[type="file"]') as HTMLInputElement;
 
     const validFile = new File(['valid'], 'avatar.jpg', { type: 'image/jpeg' });
@@ -188,7 +195,7 @@ describe('BackgroundSelectorModal - 100% Free All Presets Test Suite', () => {
       removeCustomBackground: mockRemoveCustomBackground,
     });
 
-    render(<BackgroundSelectorModal />);
+    renderWithLang(<BackgroundSelectorModal />);
     const deleteBtn = screen.getByTitle('Xóa ảnh này');
     expect(deleteBtn).toBeDefined();
 
@@ -208,7 +215,7 @@ describe('BackgroundSelectorModal - 100% Free All Presets Test Suite', () => {
       removeCustomBackground: mockRemoveCustomBackground,
     });
 
-    render(<BackgroundSelectorModal />);
+    renderWithLang(<BackgroundSelectorModal />);
     const videoTab = screen.getByRole('button', { name: /Video lặp/i });
     fireEvent.click(videoTab);
 
@@ -227,8 +234,8 @@ describe('BackgroundSelectorModal - 100% Free All Presets Test Suite', () => {
       removeCustomBackground: mockRemoveCustomBackground,
     });
 
-    render(<BackgroundSelectorModal />);
-    const closeBtn = screen.getByRole('button', { name: 'Đóng' });
+    renderWithLang(<BackgroundSelectorModal />);
+    const closeBtn = screen.getByText('Đóng');
     fireEvent.click(closeBtn);
     expect(mockSetOpenBackgroundModal).toHaveBeenCalledWith(false);
   });

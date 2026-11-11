@@ -4,9 +4,11 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { Coffee, X, Copy, Check, ExternalLink, Heart, Globe, QrCode } from 'lucide-react';
 import { useAudioApp } from '@/context/AudioAppContext';
+import { useLanguage } from '@/context/LanguageContext';
 
 export const DonateModal: React.FC = () => {
   const { openProModal, setOpenProModal } = useAudioApp();
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<'vietnam' | 'paypal'>('vietnam');
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
@@ -41,7 +43,7 @@ export const DonateModal: React.FC = () => {
         {/* Close Button */}
         <button
           onClick={() => setOpenProModal(false)}
-          aria-label="Đóng modal"
+          aria-label={t.closeModal}
           className="absolute top-5 right-5 p-2 text-white/50 hover:text-white rounded-full hover:bg-white/10 transition-colors"
         >
           <X className="w-5 h-5" />
@@ -55,22 +57,17 @@ export const DonateModal: React.FC = () => {
           <div>
             <span className="text-[11px] font-bold tracking-widest text-amber-400 uppercase flex items-center gap-1">
               <Heart className="w-3 h-3 fill-amber-400 text-amber-400" />
-              Buy Me a Coffee
+              {t.donateBadge}
             </span>
             <h2 id="donate-modal-title" className="text-xl sm:text-2xl font-bold text-white tracking-tight">
-              Ủng hộ tác giả <span className="text-white/40 font-normal">/ Support Floum</span>
+              {t.donateTitle}
             </h2>
           </div>
         </div>
 
-        {/* Dual language subtitle */}
+        {/* Subtitle */}
         <div className="mb-6 space-y-1 text-xs sm:text-sm text-white/70">
-          <p>
-            ☕ Nếu Floum giúp bạn tập trung và thư giãn tốt hơn, bạn có thể mời tác giả một tách cà phê để duy trì máy chủ nhé!
-          </p>
-          <p className="text-white/50 text-xs italic">
-            If Floum helps you focus and unwind, consider buying the creator a coffee to keep this project alive!
-          </p>
+          <p>{t.donateSubtitle}</p>
         </div>
 
         {/* Option Tabs (Vietnam QR vs International PayPal QR) */}
@@ -84,7 +81,7 @@ export const DonateModal: React.FC = () => {
             }`}
           >
             <QrCode className="w-4 h-4" />
-            <span>🇻🇳 Việt Nam (QR ACB)</span>
+            <span>{t.tabVietnam}</span>
           </button>
           <button
             onClick={() => setActiveTab('paypal')}
@@ -95,7 +92,7 @@ export const DonateModal: React.FC = () => {
             }`}
           >
             <Globe className="w-4 h-4" />
-            <span>🌍 Quốc tế (QR PayPal)</span>
+            <span>{t.tabPaypal}</span>
           </button>
         </div>
 
@@ -118,28 +115,28 @@ export const DonateModal: React.FC = () => {
               {/* Bank Info */}
               <div className="flex-1 w-full space-y-2 text-xs sm:text-sm">
                 <div>
-                  <span className="text-white/50 text-[11px] block">Ngân hàng / Bank</span>
+                  <span className="text-white/50 text-[11px] block">{t.bankLabel}</span>
                   <span className="font-semibold text-white">ACB (Ngân hàng TMCP Á Châu)</span>
                 </div>
 
                 <div>
-                  <span className="text-white/50 text-[11px] block">Số tài khoản / Account Number</span>
+                  <span className="text-white/50 text-[11px] block">{t.accountNumberLabel}</span>
                   <div className="flex items-center justify-between bg-white/10 px-3 py-1.5 rounded-xl mt-0.5">
                     <span className="font-mono font-bold text-amber-300 text-base">221754869</span>
                     <button
                       onClick={() => handleCopy('221754869', 'stk')}
                       className="flex items-center gap-1 text-[11px] px-2 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors"
-                      title="Sao chép số tài khoản"
+                      title={t.copy}
                     >
                       {copiedField === 'stk' ? (
                         <>
                           <Check className="w-3.5 h-3.5 text-emerald-400" />
-                          <span className="text-emerald-400 font-medium">Đã chép</span>
+                          <span className="text-emerald-400 font-medium">{t.copied}</span>
                         </>
                       ) : (
                         <>
                           <Copy className="w-3.5 h-3.5" />
-                          <span>Sao chép</span>
+                          <span>{t.copy}</span>
                         </>
                       )}
                     </button>
@@ -147,19 +144,19 @@ export const DonateModal: React.FC = () => {
                 </div>
 
                 <div>
-                  <span className="text-white/50 text-[11px] block">Chủ tài khoản / Account Name</span>
+                  <span className="text-white/50 text-[11px] block">{t.accountNameLabel}</span>
                   <span className="font-bold text-white tracking-wide">LE HOANG VIET</span>
                 </div>
 
                 <div>
-                  <span className="text-white/50 text-[11px] block">Nội dung chuyển khoản / Note</span>
+                  <span className="text-white/50 text-[11px] block">{t.noteLabel}</span>
                   <div className="flex items-center justify-between bg-white/10 px-3 py-1 rounded-xl mt-0.5">
                     <span className="font-mono text-white/90 text-xs">Floum coffee</span>
                     <button
                       onClick={() => handleCopy('Floum coffee', 'note')}
                       className="text-[11px] text-white/70 hover:text-white transition-colors"
                     >
-                      {copiedField === 'note' ? '✓' : 'Copy'}
+                      {copiedField === 'note' ? '✓' : t.copy}
                     </button>
                   </div>
                 </div>
@@ -167,7 +164,7 @@ export const DonateModal: React.FC = () => {
             </div>
 
             <p className="text-[11px] text-center text-white/50">
-              💡 Mở bất kỳ ứng dụng ngân hàng hoặc ví điện tử (MoMo, ZaloPay...) để quét mã QR nhanh chóng.
+              {t.scanHint}
             </p>
           </div>
         )}
@@ -191,12 +188,9 @@ export const DonateModal: React.FC = () => {
               {/* PayPal Info & Actions */}
               <div className="flex-1 w-full space-y-2.5 text-xs sm:text-sm text-left">
                 <div>
-                  <span className="text-sky-300 font-bold text-sm block">PayPal QR &amp; Direct Link</span>
+                  <span className="text-sky-300 font-bold text-sm block">{t.paypalTitle}</span>
                   <p className="text-white/70 text-xs mt-0.5">
-                    Quét mã QR bằng Camera điện thoại hoặc app PayPal để mời cà phê tức thì.
-                  </p>
-                  <p className="text-white/40 text-[11px] italic">
-                    Scan the QR with your phone camera or PayPal app.
+                    {t.paypalSubtitle}
                   </p>
                 </div>
 
@@ -208,18 +202,18 @@ export const DonateModal: React.FC = () => {
                     className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-bold text-xs shadow-lg shadow-sky-500/20 transition-all hover:scale-[1.02] active:scale-95"
                   >
                     <Coffee className="w-3.5 h-3.5" />
-                    <span>Mở trang thanh toán PayPal ↗</span>
+                    <span>{t.paypalBtn}</span>
                   </a>
                 </div>
 
                 <p className="text-[10px] text-white/50">
-                  Thẻ quốc tế: Visa, MasterCard, Amex hoặc số dư ví PayPal.
+                  {t.paypalCards}
                 </p>
               </div>
             </div>
 
             <p className="text-[11px] text-center text-white/50">
-              🔒 Giao dịch quốc tế được bảo mật và xử lý an toàn 100% bởi PayPal.
+              {t.paypalSecurity}
             </p>
           </div>
         )}
@@ -228,13 +222,13 @@ export const DonateModal: React.FC = () => {
         <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-white/50">
           <span className="flex items-center gap-1">
             <Heart className="w-3.5 h-3.5 text-rose-400 fill-rose-400" />
-            Cảm ơn bạn đã đồng hành! / Thank you!
+            {t.thankYou}
           </span>
           <button
             onClick={() => setOpenProModal(false)}
             className="text-white/60 hover:text-white underline underline-offset-4"
           >
-            Đóng / Close
+            {t.closeModal}
           </button>
         </div>
       </div>

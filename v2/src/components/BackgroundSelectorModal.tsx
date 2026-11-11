@@ -11,6 +11,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import { useAudioApp } from '@/context/AudioAppContext';
+import { useLanguage } from '@/context/LanguageContext';
 import {
   BACKGROUND_PRESETS,
   BackgroundItem,
@@ -27,6 +28,8 @@ export const BackgroundSelectorModal: React.FC = () => {
     addCustomBackground,
     removeCustomBackground,
   } = useAudioApp();
+
+  const { t } = useLanguage();
 
   const [activeTab, setActiveTab] = useState<'all' | BackgroundType | 'custom'>('all');
   const [uploadLoading, setUploadLoading] = useState(false);
@@ -56,12 +59,12 @@ export const BackgroundSelectorModal: React.FC = () => {
     if (!file) return;
 
     if (!file.type.startsWith('image/')) {
-      alert('Vui lòng chọn file hình ảnh (JPG, PNG, WebP).');
+      alert(t.alertInvalidImage);
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      alert('Kích thước ảnh tối đa 5MB.');
+      alert(t.alertImageTooLarge);
       return;
     }
 
@@ -71,7 +74,7 @@ export const BackgroundSelectorModal: React.FC = () => {
       setBackground(newBg);
     } catch (err) {
       console.error(err);
-      alert('Lỗi tải ảnh. Vui lòng thử lại.');
+      alert(t.alertUploadError);
     } finally {
       setUploadLoading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
@@ -89,15 +92,15 @@ export const BackgroundSelectorModal: React.FC = () => {
           <div>
             <h2 className="text-xl font-semibold text-white tracking-tight flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-indigo-400" />
-              Không gian &amp; Hình nền
+              {t.bgModalTitle}
             </h2>
             <p className="text-xs text-white/60 mt-0.5">
-              Tùy chỉnh không gian thư giãn với video lặp, ảnh chill chất lượng cao hoặc tự tải ảnh từ máy tính (Miễn phí 100%)
+              {t.bgModalSubtitle}
             </p>
           </div>
           <button
             onClick={() => setOpenBackgroundModal(false)}
-            aria-label="Đóng modal"
+            aria-label={t.close}
             className="p-2 text-white/50 hover:text-white rounded-full hover:bg-white/10 transition-colors"
           >
             <X className="w-5 h-5" />
@@ -115,7 +118,7 @@ export const BackgroundSelectorModal: React.FC = () => {
                   : 'text-white/70 hover:text-white hover:bg-white/10'
               }`}
             >
-              Tất cả ({allBackgrounds.length})
+              {t.tabAll} ({allBackgrounds.length})
             </button>
             <button
               onClick={() => setActiveTab('gradient')}
@@ -126,7 +129,7 @@ export const BackgroundSelectorModal: React.FC = () => {
               }`}
             >
               <Sparkles className="w-3.5 h-3.5 text-emerald-300" />
-              Chuyển màu động
+              {t.tabGradient}
             </button>
             <button
               onClick={() => setActiveTab('image')}
@@ -137,7 +140,7 @@ export const BackgroundSelectorModal: React.FC = () => {
               }`}
             >
               <ImageIcon className="w-3.5 h-3.5 text-indigo-300" />
-              Ảnh Chill
+              {t.tabImage}
             </button>
             <button
               onClick={() => setActiveTab('video')}
@@ -148,7 +151,7 @@ export const BackgroundSelectorModal: React.FC = () => {
               }`}
             >
               <Film className="w-3.5 h-3.5 text-sky-300" />
-              Video lặp
+              {t.tabVideo}
             </button>
             <button
               onClick={() => setActiveTab('custom')}
@@ -159,7 +162,7 @@ export const BackgroundSelectorModal: React.FC = () => {
               }`}
             >
               <Upload className="w-3.5 h-3.5 text-pink-300" />
-              Ảnh của bạn ({customBackgrounds.length})
+              {t.tabCustom} ({customBackgrounds.length})
             </button>
           </div>
 
@@ -178,7 +181,7 @@ export const BackgroundSelectorModal: React.FC = () => {
               className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-gradient-to-r from-indigo-500/20 to-purple-500/20 hover:from-indigo-500/30 hover:to-purple-500/30 text-indigo-300 border border-indigo-500/30 shadow-sm transition-all active:scale-95"
             >
               <Upload className="w-3.5 h-3.5" />
-              <span>{uploadLoading ? 'Đang tải...' : 'Tự tải ảnh lên'}</span>
+              <span>{uploadLoading ? t.uploading : t.uploadBtn}</span>
             </button>
           </div>
         </div>
@@ -187,6 +190,8 @@ export const BackgroundSelectorModal: React.FC = () => {
         <div className="flex-1 overflow-y-auto p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {filteredPresets.map((preset) => {
             const isSelected = currentBackground.id === preset.id;
+            const displayName = t.presetNames[preset.id] || preset.name;
+            const displayDesc = t.presetDescriptions[preset.id] || preset.description;
 
             return (
               <div
@@ -222,12 +227,12 @@ export const BackgroundSelectorModal: React.FC = () => {
                       <Sparkles className="w-3 h-3 text-amber-400" />
                     )}
                     {preset.isCustom
-                      ? 'Ảnh tự tải'
+                      ? t.badgeCustom
                       : preset.type === 'video'
-                      ? 'Video'
+                      ? t.badgeVideo
                       : preset.type === 'image'
-                      ? 'Ảnh'
-                      : 'Đổi màu Free'}
+                      ? t.badgeImage
+                      : t.badgeGradient}
                   </span>
 
                   <div className="flex items-center gap-1.5">
@@ -238,7 +243,7 @@ export const BackgroundSelectorModal: React.FC = () => {
                           e.stopPropagation();
                           removeCustomBackground(preset.id);
                         }}
-                        title="Xóa ảnh này"
+                        title={t.deleteCustomBgTitle}
                         className="p-1 rounded-md bg-red-500/20 text-red-300 hover:bg-red-500/40 transition-colors"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -256,11 +261,11 @@ export const BackgroundSelectorModal: React.FC = () => {
                 {/* Card Info at Bottom */}
                 <div className="relative mt-auto p-3 z-10">
                   <h3 className="text-sm font-semibold text-white group-hover:text-indigo-200 transition-colors">
-                    {preset.name}
+                    {displayName}
                   </h3>
-                  {preset.description && (
+                  {displayDesc && (
                     <p className="text-[11px] text-white/70 line-clamp-1 mt-0.5">
-                      {preset.description}
+                      {displayDesc}
                     </p>
                   )}
                 </div>
@@ -272,13 +277,13 @@ export const BackgroundSelectorModal: React.FC = () => {
         {/* Footer */}
         <div className="px-6 py-4 border-t border-white/10 flex items-center justify-between bg-white/[0.02]">
           <span className="text-xs text-white/60">
-            Đang áp dụng: <span className="text-white font-medium">{currentBackground.name}</span>
+            {t.currentlyApplied} <span className="text-white font-medium">{t.presetNames[currentBackground.id] || currentBackground.name}</span>
           </span>
           <button
             onClick={() => setOpenBackgroundModal(false)}
             className="px-5 py-2 rounded-xl text-xs font-semibold bg-white text-slate-900 hover:bg-white/90 active:scale-95 transition-all"
           >
-            Đóng
+            {t.close}
           </button>
         </div>
       </div>

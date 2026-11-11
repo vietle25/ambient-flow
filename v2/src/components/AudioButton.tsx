@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { SoundModel } from '@/types/sound';
 import { useAudioApp } from '@/context/AudioAppContext';
+import { useLanguage } from '@/context/LanguageContext';
 
 const ICON_MAP: Record<string, React.FC<{ className?: string }>> = {
   CloudDrizzle,
@@ -41,10 +42,12 @@ interface AudioButtonProps {
 
 export const AudioButton: React.FC<AudioButtonProps> = ({ sound }) => {
   const { activeSounds, toggleSound, setSoundVolume } = useAudioApp();
+  const { t } = useLanguage();
 
   const isActive = activeSounds[sound.id] !== undefined;
   const currentVolume = activeSounds[sound.id] ?? 50;
   const IconComponent = ICON_MAP[sound.iconName] || CloudDrizzle;
+  const displayName = t.sounds[sound.id] || sound.name;
 
   return (
     <div
@@ -73,7 +76,7 @@ export const AudioButton: React.FC<AudioButtonProps> = ({ sound }) => {
             isActive ? 'text-white' : 'text-white/70 group-hover:text-white'
           }`}
         >
-          {sound.name}
+          {displayName}
         </span>
       </button>
 

@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { X, Sparkles } from 'lucide-react';
 import { useAudioApp } from '@/context/AudioAppContext';
+import { useLanguage } from '@/context/LanguageContext';
 
 const BOOKMARK_ICONS = [
   '🎵', '🎶', '🎼', '🎹', '🎸', '🥁', '🎺', '🎷', '🎻', '🎧',
@@ -24,6 +25,7 @@ const NOUNS = [
 
 export const SaveBookmarkModal: React.FC = () => {
   const { openSaveModal, setOpenSaveModal, saveCurrentBookmark, isSavingBookmark } = useAudioApp();
+  const { t } = useLanguage();
 
   const [name, setName] = useState('');
   const [selectedIcon, setSelectedIcon] = useState('🎵');
@@ -44,7 +46,7 @@ export const SaveBookmarkModal: React.FC = () => {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
-      setError('Please enter a preset name');
+      setError(t.nameRequiredError);
       return;
     }
     const success = await saveCurrentBookmark(name, selectedIcon);
@@ -59,46 +61,22 @@ export const SaveBookmarkModal: React.FC = () => {
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-white/10">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-amber-300" />
-            <h2 className="text-xl font-bold">Save Soundscape</h2>
+            <Sparkles className="w-5 h-5 text-sky-400" />
+            <h2 className="text-lg font-semibold tracking-wide">{t.saveModalTitle}</h2>
           </div>
           <button
             onClick={() => setOpenSaveModal(false)}
-            className="p-1 rounded-full text-white/60 hover:text-white hover:bg-white/10 transition-colors"
+            className="p-1.5 text-white/50 hover:text-white rounded-full hover:bg-white/10 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSave} className="mt-5 space-y-5">
-          {/* Icon Selector */}
+        <form onSubmit={handleSave} className="mt-5 space-y-4">
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-white/70 mb-2">
-              Choose Icon
-            </label>
-            <div className="grid grid-cols-6 gap-2 max-h-36 overflow-y-auto p-2 bg-black/20 rounded-2xl border border-white/10">
-              {BOOKMARK_ICONS.map((icon) => (
-                <button
-                  type="button"
-                  key={icon}
-                  onClick={() => setSelectedIcon(icon)}
-                  className={`h-11 flex items-center justify-center rounded-xl text-xl transition-all ${
-                    selectedIcon === icon
-                      ? 'bg-white/25 border-2 border-white scale-105 shadow-md'
-                      : 'hover:bg-white/10 border border-transparent'
-                  }`}
-                >
-                  {icon}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Name Input */}
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-white/70 mb-2">
-              Preset Name
+            <label className="block text-xs font-medium text-white/70 mb-1.5 uppercase tracking-wider">
+              {t.presetNameLabel}
             </label>
             <input
               type="text"
@@ -107,29 +85,50 @@ export const SaveBookmarkModal: React.FC = () => {
                 setName(e.target.value);
                 if (error) setError(null);
               }}
-              placeholder="e.g. Rainy Coffee Shop"
-              className="w-full px-4 py-3 rounded-2xl bg-white/10 border border-white/20 focus:border-white focus:outline-none text-white placeholder-white/40 text-sm transition-colors"
-              autoFocus
+              placeholder={t.presetNamePlaceholder}
+              maxLength={30}
+              className="w-full px-4 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/30 focus:outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-400 text-sm transition-all"
             />
+            {error && <p className="text-red-400 text-xs mt-1">{error}</p>}
           </div>
 
-          {error && <p className="text-red-400 text-xs">{error}</p>}
+          <div>
+            <label className="block text-xs font-medium text-white/70 mb-2 uppercase tracking-wider">
+              {t.chooseIconLabel}
+            </label>
+            <div className="grid grid-cols-6 gap-2 max-h-36 overflow-y-auto p-1 scrollbar-thin scrollbar-thumb-white/20">
+              {BOOKMARK_ICONS.map((icon) => (
+                <button
+                  key={icon}
+                  type="button"
+                  onClick={() => setSelectedIcon(icon)}
+                  className={`w-10 h-10 flex items-center justify-center rounded-xl text-lg transition-all ${
+                    selectedIcon === icon
+                      ? 'bg-sky-500 text-white scale-110 shadow-lg shadow-sky-500/30'
+                      : 'bg-white/5 hover:bg-white/15 text-white/80'
+                  }`}
+                >
+                  {icon}
+                </button>
+              ))}
+            </div>
+          </div>
 
-          {/* Actions */}
-          <div className="flex items-center justify-end gap-3 pt-2">
+          {/* Action buttons */}
+          <div className="flex items-center justify-end gap-3 pt-3 border-t border-white/10 mt-6">
             <button
               type="button"
               onClick={() => setOpenSaveModal(false)}
-              className="px-5 py-2.5 rounded-2xl text-sm font-medium text-white/70 hover:text-white hover:bg-white/10 transition-colors"
+              className="px-4 py-2 rounded-xl text-xs font-medium text-white/70 hover:text-white hover:bg-white/10 transition-colors"
             >
-              Cancel
+              {t.cancel}
             </button>
             <button
               type="submit"
               disabled={isSavingBookmark}
-              className="px-6 py-2.5 rounded-2xl text-sm font-semibold bg-white text-slate-900 hover:bg-white/90 active:scale-95 transition-all shadow-lg shadow-white/10 disabled:opacity-50"
+              className="px-5 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-sky-400 to-indigo-500 text-white hover:from-sky-300 hover:to-indigo-400 active:scale-95 transition-all shadow-md shadow-sky-500/20 disabled:opacity-50"
             >
-              {isSavingBookmark ? 'Saving...' : 'Save'}
+              {isSavingBookmark ? t.saving : t.saveBtn}
             </button>
           </div>
         </form>
