@@ -115,9 +115,9 @@ export const AnimatedBackground: React.FC = () => {
         </video>
       )}
 
-      {/* Dark overlay để giữ độ tương phản cao, làm nổi bật sound cards và thanh điều khiển */}
-      <div className="absolute inset-0 bg-slate-950/45 backdrop-blur-[2px] transition-colors duration-700" />
-      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/60 pointer-events-none" />
+      {/* Trong suốt, thanh khiết: Giữ lớp phủ siêu mỏng để nhìn trọn vẹn cảnh nền video/ảnh */}
+      <div className="absolute inset-0 bg-black/20 transition-colors duration-700" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/25 pointer-events-none" />
 
       {/* Ambient Lighting Orbs */}
       <div className="absolute -top-32 -left-32 w-[550px] h-[550px] bg-sky-500/10 rounded-full blur-[140px] pointer-events-none" />

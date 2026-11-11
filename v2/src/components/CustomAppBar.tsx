@@ -29,7 +29,7 @@ export const CustomAppBar: React.FC = () => {
   const hasActiveSounds = Object.keys(activeSounds).length > 0;
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 h-16 px-4 sm:px-6 flex items-center justify-between backdrop-blur-md bg-white/5 border-b border-white/10">
+    <header className="fixed top-0 left-0 right-0 z-40 h-16 px-4 sm:px-6 flex items-center justify-between bg-gradient-to-b from-black/60 via-black/20 to-transparent backdrop-blur-sm border-b border-white/5 transition-all duration-300">
       {/* Brand Logo */}
       <AppLogo size="md" />
 

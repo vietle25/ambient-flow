@@ -53,8 +53,8 @@ export const AudioButton: React.FC<AudioButtonProps> = ({ sound }) => {
     <div
       className={`relative group flex flex-col items-center justify-center p-5 rounded-3xl transition-all duration-300 border ${
         isActive
-          ? 'bg-[#34475E]/60 border-white/40 shadow-lg shadow-black/20 scale-[1.02]'
-          : 'bg-[#405265]/20 hover:bg-[#405265]/40 border-white/10 hover:border-white/20'
+          ? 'bg-white/20 border-white/40 shadow-xl shadow-black/30 backdrop-blur-md scale-[1.02]'
+          : 'bg-black/20 hover:bg-black/35 border-white/10 hover:border-white/25 backdrop-blur-sm hover:scale-[1.01]'
       }`}
     >
       {/* Clickable Icon Button */}
@@ -65,7 +65,7 @@ export const AudioButton: React.FC<AudioButtonProps> = ({ sound }) => {
         <div
           className={`p-3.5 rounded-2xl transition-all duration-300 ${
             isActive
-              ? 'bg-white/20 text-white scale-110 shadow-inner'
+              ? 'bg-white/25 text-white scale-110 shadow-inner'
               : 'text-white/60 group-hover:text-white group-hover:scale-105'
           }`}
         >
@@ -73,7 +73,7 @@ export const AudioButton: React.FC<AudioButtonProps> = ({ sound }) => {
         </div>
         <span
           className={`text-sm font-medium tracking-wide transition-colors ${
-            isActive ? 'text-white' : 'text-white/70 group-hover:text-white'
+            isActive ? 'text-white font-semibold' : 'text-white/70 group-hover:text-white'
           }`}
         >
           {displayName}
@@ -95,7 +95,7 @@ export const AudioButton: React.FC<AudioButtonProps> = ({ sound }) => {
             max={100}
             value={currentVolume}
             onChange={(e) => setSoundVolume(sound.id, Number(e.target.value))}
-            className="w-full h-1 bg-white/20 rounded-lg appearance-none cursor-pointer accent-white hover:accent-sky-300 transition-colors"
+            className="w-full h-1 bg-white/25 rounded-lg appearance-none cursor-pointer accent-white hover:accent-sky-300 transition-colors"
           />
         </div>
       </div>
