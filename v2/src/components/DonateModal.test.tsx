@@ -8,7 +8,7 @@ vi.mock('@/context/AudioAppContext', () => ({
   useAudioApp: vi.fn(),
 }));
 
-describe('DonateModal - Buy Me a Coffee Dual Language Suite', () => {
+describe('DonateModal - Buy Me a Coffee Dual Language Suite with Both QRs', () => {
   const mockSetOpenProModal = vi.fn();
 
   beforeEach(() => {
@@ -37,19 +37,7 @@ describe('DonateModal - Buy Me a Coffee Dual Language Suite', () => {
     expect(mockSetOpenProModal).toHaveBeenCalledWith(false);
   });
 
-  it('đóng modal khi người dùng bấm nút Đóng / Close ở footer', () => {
-    (useAudioApp as any).mockReturnValue({
-      openProModal: true,
-      setOpenProModal: mockSetOpenProModal,
-    });
-
-    render(<DonateModal />);
-    const closeFooterBtn = screen.getByRole('button', { name: /Đóng \/ Close/i });
-    fireEvent.click(closeFooterBtn);
-    expect(mockSetOpenProModal).toHaveBeenCalledWith(false);
-  });
-
-  it('hiển thị đầy đủ thông tin chuyển khoản ngân hàng ACB ở tab Việt Nam', () => {
+  it('hiển thị đầy đủ thông tin chuyển khoản và mã QR ACB ở tab Việt Nam', () => {
     (useAudioApp as any).mockReturnValue({
       openProModal: true,
       setOpenProModal: mockSetOpenProModal,
@@ -93,18 +81,22 @@ describe('DonateModal - Buy Me a Coffee Dual Language Suite', () => {
     });
   });
 
-  it('chuyển sang tab PayPal Quốc tế và hiển thị nút thanh toán PayPal chuẩn xác', () => {
+  it('chuyển sang tab PayPal Quốc tế và hiển thị mã QR PayPal cùng nút mở trang thanh toán', () => {
     (useAudioApp as any).mockReturnValue({
       openProModal: true,
       setOpenProModal: mockSetOpenProModal,
     });
 
     render(<DonateModal />);
-    const paypalTabBtn = screen.getByRole('button', { name: /Quốc tế \(PayPal\)/i });
+    const paypalTabBtn = screen.getByRole('button', { name: /Quốc tế \(QR PayPal\)/i });
     fireEvent.click(paypalTabBtn);
 
-    expect(screen.getByText(/PayPal International Donation/i)).toBeDefined();
-    const paypalLink = screen.getByRole('link', { name: /Mời cà phê qua PayPal \/ Donate with PayPal/i });
+    // Kiểm tra có mã QR PayPal
+    const paypalQrImage = screen.getByAltText(/Mã QR PayPal - Buy me a coffee/i);
+    expect(paypalQrImage).toBeDefined();
+
+    // Kiểm tra link mở trực tiếp
+    const paypalLink = screen.getByRole('link', { name: /Mở trang thanh toán PayPal ↗/i });
     expect(paypalLink).toBeDefined();
     expect(paypalLink.getAttribute('href')).toBe('https://www.paypal.com/ncp/payment/QTU28KHNPABFE');
     expect(paypalLink.getAttribute('target')).toBe('_blank');

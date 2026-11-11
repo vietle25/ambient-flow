@@ -36,7 +36,7 @@ export const DonateModal: React.FC = () => {
       >
         {/* Glow ambient background effects */}
         <div className="absolute -top-24 -right-24 w-60 h-60 bg-amber-500/20 rounded-full blur-[90px] pointer-events-none" />
-        <div className="absolute -bottom-24 -left-24 w-60 h-60 bg-rose-500/15 rounded-full blur-[90px] pointer-events-none" />
+        <div className="absolute -bottom-24 -left-24 w-60 h-60 bg-sky-500/15 rounded-full blur-[90px] pointer-events-none" />
 
         {/* Close Button */}
         <button
@@ -73,7 +73,7 @@ export const DonateModal: React.FC = () => {
           </p>
         </div>
 
-        {/* Option Tabs (Vietnam QR vs International PayPal) */}
+        {/* Option Tabs (Vietnam QR vs International PayPal QR) */}
         <div className="flex p-1 rounded-2xl bg-white/10 border border-white/10 mb-6 select-none">
           <button
             onClick={() => setActiveTab('vietnam')}
@@ -84,7 +84,7 @@ export const DonateModal: React.FC = () => {
             }`}
           >
             <QrCode className="w-4 h-4" />
-            <span>🇻🇳 Việt Nam (QR Bank)</span>
+            <span>🇻🇳 Việt Nam (QR ACB)</span>
           </button>
           <button
             onClick={() => setActiveTab('paypal')}
@@ -95,7 +95,7 @@ export const DonateModal: React.FC = () => {
             }`}
           >
             <Globe className="w-4 h-4" />
-            <span>🌍 Quốc tế (PayPal)</span>
+            <span>🌍 Quốc tế (QR PayPal)</span>
           </button>
         </div>
 
@@ -172,35 +172,49 @@ export const DonateModal: React.FC = () => {
           </div>
         )}
 
-        {/* Tab 2: PayPal International */}
+        {/* Tab 2: PayPal International with QR Code */}
         {activeTab === 'paypal' && (
           <div className="space-y-4 animate-in fade-in duration-150">
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-sky-500/10 via-indigo-500/5 to-transparent border border-sky-500/20 text-center space-y-4">
-              <div className="w-14 h-14 mx-auto rounded-2xl bg-sky-500/20 text-sky-400 border border-sky-500/30 flex items-center justify-center shadow-lg">
-                <Globe className="w-7 h-7" />
+            <div className="flex flex-col sm:flex-row items-center gap-5 p-4 rounded-2xl bg-sky-500/10 border border-sky-500/20">
+              {/* PayPal QR Image */}
+              <div className="relative w-40 h-40 shrink-0 bg-white p-2 rounded-2xl shadow-lg flex items-center justify-center overflow-hidden">
+                <Image
+                  src="/images/donate_qr_paypal.png"
+                  alt="Mã QR PayPal - Buy me a coffee"
+                  width={150}
+                  height={150}
+                  className="rounded-xl object-contain w-full h-full"
+                  priority
+                />
               </div>
 
-              <div>
-                <h3 className="text-lg font-bold text-white">PayPal International Donation</h3>
-                <p className="text-xs text-white/70 mt-1 max-w-sm mx-auto">
-                  Hỗ trợ qua thẻ Visa, MasterCard, American Express hoặc tài khoản ví PayPal của bạn.
-                </p>
-                <p className="text-[11px] text-white/40 mt-0.5 italic">
-                  Donate securely via debit/credit cards (Visa, MasterCard, Amex) or PayPal balance.
-                </p>
-              </div>
+              {/* PayPal Info & Actions */}
+              <div className="flex-1 w-full space-y-2.5 text-xs sm:text-sm text-left">
+                <div>
+                  <span className="text-sky-300 font-bold text-sm block">PayPal QR &amp; Direct Link</span>
+                  <p className="text-white/70 text-xs mt-0.5">
+                    Quét mã QR bằng Camera điện thoại hoặc app PayPal để mời cà phê tức thì.
+                  </p>
+                  <p className="text-white/40 text-[11px] italic">
+                    Scan the QR with your phone camera or PayPal app.
+                  </p>
+                </div>
 
-              <div className="pt-2">
-                <a
-                  href={paypalUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-bold text-sm shadow-xl shadow-sky-500/25 transition-all hover:scale-[1.02] active:scale-95"
-                >
-                  <Coffee className="w-4 h-4" />
-                  <span>Mời cà phê qua PayPal / Donate with PayPal</span>
-                  <ExternalLink className="w-4 h-4 ml-1" />
-                </a>
+                <div className="pt-1">
+                  <a
+                    href={paypalUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-bold text-xs shadow-lg shadow-sky-500/20 transition-all hover:scale-[1.02] active:scale-95"
+                  >
+                    <Coffee className="w-3.5 h-3.5" />
+                    <span>Mở trang thanh toán PayPal ↗</span>
+                  </a>
+                </div>
+
+                <p className="text-[10px] text-white/50">
+                  Thẻ quốc tế: Visa, MasterCard, Amex hoặc số dư ví PayPal.
+                </p>
               </div>
             </div>
 
