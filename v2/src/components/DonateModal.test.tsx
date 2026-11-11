@@ -13,7 +13,7 @@ const renderWithLang = (ui: React.ReactElement) => {
   return render(<LanguageProvider>{ui}</LanguageProvider>);
 };
 
-describe('DonateModal - Buy Me a Coffee Dual Language Suite with Both QRs', () => {
+describe('DonateModal - Buy Me a Coffee Luxury Suite with Both QRs', () => {
   const mockSetOpenProModal = vi.fn();
 
   beforeEach(() => {
@@ -52,10 +52,10 @@ describe('DonateModal - Buy Me a Coffee Dual Language Suite with Both QRs', () =
 
     renderWithLang(<DonateModal />);
     // Tiêu đề
-    expect(screen.getByText(/Ủng hộ tác giả/i)).toBeDefined();
+    expect(screen.getByText(/Mời tác giả tách cà phê/i)).toBeDefined();
 
     // Thông tin ngân hàng ACB
-    expect(screen.getByText(/ACB \(Ngân hàng TMCP Á Châu\)/i)).toBeDefined();
+    expect(screen.getByText(/Ngân hàng Á Châu/i)).toBeDefined();
     expect(screen.getByText('221754869')).toBeDefined();
     expect(screen.getByText('LE HOANG VIET')).toBeDefined();
 
@@ -94,7 +94,7 @@ describe('DonateModal - Buy Me a Coffee Dual Language Suite with Both QRs', () =
     });
 
     renderWithLang(<DonateModal />);
-    const paypalTabBtn = screen.getByRole('button', { name: /Quốc tế \(QR PayPal\)/i });
+    const paypalTabBtn = screen.getByRole('button', { name: /Quốc tế \(PayPal QR\)/i });
     fireEvent.click(paypalTabBtn);
 
     // Kiểm tra có mã QR PayPal
