@@ -50,9 +50,9 @@ export const CustomAppBar: React.FC = () => {
         <button
           onClick={() => setOpenProModal(true)}
           title={t.buyMeCoffeeTitle}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 shadow-md shadow-amber-500/20 transition-all hover:scale-105 active:scale-95"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-white/10 hover:bg-white/20 border border-white/15 text-white transition-all duration-200 active:scale-95"
         >
-          <Coffee className="w-3.5 h-3.5 fill-slate-950" />
+          <Coffee className="w-3.5 h-3.5 text-amber-300" />
           <span className="hidden sm:inline">{t.buyMeCoffee}</span>
           <span className="sm:hidden">{t.buyMeCoffeeShort}</span>
         </button>
